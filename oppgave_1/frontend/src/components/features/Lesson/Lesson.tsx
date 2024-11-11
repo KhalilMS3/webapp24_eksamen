@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { courses, comments } from "@/data/data";
 import { CommentType, Course, Lesson as LessonType } from "@/types";
+import CourseLayout from "@/components/layout/CourseLayout";
 
 export default function Lesson() {
   const params = useParams() as Record<string, string>;
@@ -41,7 +42,9 @@ export default function Lesson() {
   }, [courseSlug, lessonSlug]);
 
   return (
+    <CourseLayout>
     <div>
+      
       <div className="flex justify-between">
         <h3 data-testid="course_title" className="mb-6 text-base font-bold">
           <a className="underline" href={`/courses/${course?.slug}`}>
@@ -58,16 +61,16 @@ export default function Lesson() {
       <p
         data-testid="lesson_preAmble"
         className="mt-4 font-semibold leading-relaxed"
-      >
+        >
         {lesson?.preAmble}
       </p>
       {lesson?.text &&
         lesson.text.length > 0 &&
         lesson.text.map((text) => (
           <p
-            data-testid="lesson_text"
-            className="mt-4 font-normal"
-            key={text.id}
+          data-testid="lesson_text"
+          className="mt-4 font-normal"
+          key={text.id}
           >
             {text.text}
           </p>
@@ -85,7 +88,7 @@ export default function Lesson() {
             setSuccess(!!name && !!comment);
           }}
           noValidate
-        >
+          >
           <label className="mb-4 flex flex-col" htmlFor="name">
             <span className="mb-1 text-sm font-semibold">Navn*</span>
             <input
@@ -96,7 +99,7 @@ export default function Lesson() {
               value={name}
               onChange={handleName}
               className="w-full rounded bg-slate-100"
-            />
+              />
           </label>
           <label className="mb-4 flex flex-col" htmlFor="comment">
             <span className="mb-1 text-sm font-semibold">
@@ -115,7 +118,7 @@ export default function Lesson() {
             className="rounded bg-emerald-600 px-10 py-2 text-center text-base text-white"
             data-testid="form_submit"
             type="submit"
-          >
+            >
             Legg til kommentar
           </button>
           {formError && (
@@ -125,8 +128,8 @@ export default function Lesson() {
           )}
           {success && (
             <p
-              className="font-semibold text-emerald-500"
-              data-testid="form_success"
+            className="font-semibold text-emerald-500"
+            data-testid="form_success"
             >
               Skjema sendt
             </p>
@@ -135,8 +138,8 @@ export default function Lesson() {
         <ul className="mt-8" data-testid="comments_list">
           {lessonComments.map((c: CommentType) => (
             <li
-              className="mb-6 rounded border border-slate-200 px-4 py-6"
-              key={c.id}
+            className="mb-6 rounded border border-slate-200 px-4 py-6"
+            key={c.id}
             >
               <h5 data-testid="user_comment_name" className="font-bold">
                 {c.createdBy.name}
@@ -147,5 +150,6 @@ export default function Lesson() {
         </ul>
       </section>
     </div>
+    </CourseLayout>
   );
 }
