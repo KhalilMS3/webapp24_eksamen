@@ -117,7 +117,7 @@ function Course() {
 }
 
 function Courses() {
-  
+  // Moved 
 }
 
 function Lesson() {
@@ -126,6 +126,7 @@ function Lesson() {
   const [lessonComments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
+  
   const [lesson, setLesson] = useState(null);
   const [course, setCourse] = useState(null);
   const courseSlug = "javascript-101";

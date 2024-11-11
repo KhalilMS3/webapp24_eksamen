@@ -33,9 +33,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Layout>
         {children}
+        </Layout>
       </body>
     </html>
   );
 }
-import React from "react";
+import React from "react";import Layout from "@/components/layout/Layout";
+
