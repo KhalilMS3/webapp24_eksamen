@@ -11,6 +11,8 @@ import {
 
 import { useParams, useRouter } from "next/navigation";
 
+
+// DONE
 const getCourse = async (slug) => {
   const data = await courses.filter((course) => course.slug === slug);
   return data?.[0];
@@ -20,6 +22,8 @@ const createCourse = async (data) => {
   await courses.push(data);
 };
 
+
+// DONE
 const getLesson = async (courseSlug, lessonSlug) => {
   const data = await courses
     .flatMap(
@@ -31,6 +35,7 @@ const getLesson = async (courseSlug, lessonSlug) => {
   return data?.[0];
 };
 
+// DONE
 const getComments = async (lessonSlug) => {
   const data = await comments.filter(
     (comment) => comment.lesson.slug === lessonSlug
@@ -38,10 +43,11 @@ const getComments = async (lessonSlug) => {
   return data;
 };
 
+// DONE
 const createComment = async (data) => {
   await comments.push(data);
 };
-
+// DONE
 function Course() {
   const [content, setContent] = useState(null);
 
@@ -116,10 +122,12 @@ function Course() {
   );
 }
 
+// DONE
 function Courses() {
   // Moved 
 }
 
+// DONE
 function Lesson() {
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -433,7 +441,7 @@ function Create() {
       setCurrent(2);
       await createCourse({ ...courseFields, lessons });
       setTimeout(() => {
-        router.push("/kurs");
+        router.push("/courses");
       }, 500);
     } else {
       setFormError(true);
@@ -840,6 +848,7 @@ function Create() {
 }
 
 export default function All() {
+  
   return (
     <p>Hello from All.js</p>
   );
