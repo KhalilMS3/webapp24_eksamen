@@ -30,6 +30,7 @@ export default function CourseForm() {
     await courses.push(data);
   };
 
+  // SRC: Kilde: ChatGPT: corrugiation of syntax error
   const isValid = (items: any): boolean => {
     if (typeof items !== "object" || items === null) {
       return false;

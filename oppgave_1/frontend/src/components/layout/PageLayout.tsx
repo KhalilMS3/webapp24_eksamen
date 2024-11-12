@@ -2,7 +2,7 @@ import Footer from '@/components/layout/Footer'
 import Nav from '@/components/layout/Nav'
 import React from 'react'
 import { PropsWithChildren } from 'react'
-export default function Layout({ children }:PropsWithChildren) {
+export default function PageLayout({ children }:PropsWithChildren) {
 return (
    <>
    <div

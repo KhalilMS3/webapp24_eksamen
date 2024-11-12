@@ -40,5 +40,6 @@ export default function RootLayout({
     </html>
   );
 }
-import React from "react";import Layout from "@/components/layout/Layout";
+import React from "react";
+import Layout from "@/components/layout/PageLayout";
 

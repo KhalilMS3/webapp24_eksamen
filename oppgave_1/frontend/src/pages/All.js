@@ -17,12 +17,10 @@ const getCourse = async (slug) => {
   const data = await courses.filter((course) => course.slug === slug);
   return data?.[0];
 };
-
+//DONE
 const createCourse = async (data) => {
   await courses.push(data);
 };
-
-
 // DONE
 const getLesson = async (courseSlug, lessonSlug) => {
   const data = await courses
@@ -34,7 +32,6 @@ const getLesson = async (courseSlug, lessonSlug) => {
     .filter(Boolean);
   return data?.[0];
 };
-
 // DONE
 const getComments = async (lessonSlug) => {
   const data = await comments.filter(
@@ -42,7 +39,6 @@ const getComments = async (lessonSlug) => {
   );
   return data;
 };
-
 // DONE
 const createComment = async (data) => {
   await comments.push(data);
@@ -121,12 +117,10 @@ function Course() {
     </div>
   );
 }
-
 // DONE
 function Courses() {
   // Moved 
 }
-
 // DONE
 function Lesson() {
   const [success, setSuccess] = useState(false);
@@ -285,7 +279,7 @@ function Lesson() {
     </div>
   );
 }
-
+//DONE
 function SignUp() {
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -305,7 +299,7 @@ function SignUp() {
     if (formIsValid.length === 0) {
       setSuccess(true);
       setTimeout(() => {
-        router.push("/kurs");
+        router.push("/courses");
       }, 500);
     } else {
       setFormError(true);
@@ -383,7 +377,7 @@ function SignUp() {
     </section>
   );
 }
-
+//DONE
 const isValid = (items) => {
   const invalidFields = [];
   // eslint-disable-next-line no-shadow
@@ -412,7 +406,7 @@ const isValid = (items) => {
   validate(items);
   return invalidFields.length === 0;
 };
-
+//DONE
 function Create() {
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);

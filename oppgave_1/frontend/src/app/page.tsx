@@ -1,20 +1,7 @@
-import All from "@/pages/All";
-import Link from "next/link";
+import Signup from "@/components/features/Auth/Signup";
 
-export default function Home() {
+export default function Page() {
   return (
-    <main className="h-full">
-      <p>Hei, navigere til: </p>
-      <p>
-        <b>
-          <Link href="/courses">Kurs</Link>{" "}
-        </b>
-        for å se alle kurs
-      </p>
-      <p>
-        <b><Link href="/courseForm">Nytt kurs</Link></b> for å opprette et nytt kurs
-      </p>
-    </main>
+    <Signup/>
   );
 }
-import React from "react";
