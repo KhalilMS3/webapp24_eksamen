@@ -1,6 +1,8 @@
 import { Result } from "@/types"
 import { Course, CourseDB, courseFromDB, courseToDB, Lesson, lessonFromDB, lessonToDB } from "./courses.schema"
 import db from "@/db/db"
+import { validateCourse, validateLesson } from "./courses.services"
+import { error } from "console"
 
 type CourseRepository = {
    list: () => Promise<Result<Course[]>>,
@@ -15,17 +17,24 @@ export const createCourseRepository = (db: any): CourseRepository => {
       list: async (): Promise<Result<Course[]>> => {
          try {
             const rows = db.prepare("SELECT id, title, slug, description, category FROM Course").all();
-         const courses = rows.map((row: CourseDB) => ({
-            ...row,
-          lessons: [], // Leksjoner i  tom liste da vi ikke trenger leksjoner ved listing av kursene
-         }));
-         return { success: true, data: courses };
+            const courses = rows.map((row: CourseDB) => ({
+               ...row,
+               lessons: [], // Leksjoner i  tom liste da vi ikke trenger leksjoner ved listing av kursene
+            }));
+            return { success: true, data: courses };
          } catch (error) {
             console.error(error)
-            return { success: false, error: { code: "500", message: `Failed to get courses from Database: ${error}`} }
+            return { success: false, error: { code: "500", message: `Failed to get courses from Database: ${error}` } }
          }
       },
       create: async (data: Course): Promise<Result<Course>> => {
+         const validatedCourseResult = validateCourse(data)
+         if (!validatedCourseResult.success) {
+            return {
+               success: false,
+               error: { code: "400", message: `validation Error ${validatedCourseResult.error}` }
+            }
+         }
          try {
             const dbTransaction = db.transaction(() => {
                const createdCourse: CourseDB = courseToDB(data)
@@ -43,6 +52,14 @@ export const createCourseRepository = (db: any): CourseRepository => {
                )
                if (data.lessons) {
                   data.lessons.forEach((lesson) => {
+
+                     const validatedLessonResult = validateLesson(lesson)
+                     if (!validatedLessonResult.success) {
+                        return {
+                           success: false,
+                           error: {code: 400, message: `Lesson validation failed ${validatedLessonResult.error}`}
+                        }
+                     }
                      const createdLesson = lessonToDB(lesson)
                      db.prepare(
                         `
