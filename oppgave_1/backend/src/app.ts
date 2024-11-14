@@ -17,14 +17,24 @@ app.get('/api/courses', async (c) => {
   }
 })
 
-app.get('/api/courses/:slug', async (c) => {
-  const slug = c.req.param('slug')
-  const result = await courseRepository.getBySlug(slug)
+app.get('/api/courses/:courseSlug', async (c) => {
+  const courseSlug = c.req.param('courseSlug')
+  const result = await courseRepository.getCourseBySlug(courseSlug)
   if (result.success){
     return c.json(result.data, 200)
   } else {
     return c.json({ error: result.error }, 500)
   }
+})
+app.get('/api/courses/:courseSlug/:lessonSlug', async (c) => { 
+
+  const courseSlug = c.req.param('courseSlug')
+  const lessonSlug = c.req.param('lessonSlug')
+  const lessonResult = await courseRepository.getLessonBySlug(courseSlug, lessonSlug)
+  if (!lessonResult.success) {
+    return c.json({success: false, error: lessonResult.error}, 404)
+  }
+  return c.json({success: true, data: lessonResult.data}, 200)
 })
 
 app.post('/api/courses', async (c) => {

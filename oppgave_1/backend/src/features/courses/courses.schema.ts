@@ -1,19 +1,31 @@
 import { z } from "zod";
 
+export const CommentSchema = z.object({
+   id: z.string(),
+   createdBy: z.object({
+      id: z.string(),
+      name: z.string().min(1, "Name required"),
+   }),
+   comment: z.string().min(1, "Comment can't be empty"),
+   lesson: z.object({
+      slug: z.string()
+   }),
+})
 
 export const LessonSchema = z.object({
-   id: z.string().uuid("Invalid UUID"),
+   id: z.string(),
    title: z.string().min(1, "title required"),
    slug: z.string().min(1, "slug required"),
    preAmble: z.string().optional(),
    text: z.array(z.object({
       id: z.string(),
       text: z.string().min(1, "text can't be empty")
-   }))
+   })),
+   comments: z.array(CommentSchema).optional()
 })
 
 export const CourseSchema = z.object({
-   id: z.string().uuid("Invalid UUID"),
+   id: z.string(),
    title: z.string().min(1, "title required"),
    slug: z.string().min(1, "slug required"),
    description: z.string().min(1, "description required"),
@@ -28,17 +40,7 @@ export const LessonSchemaDB = LessonSchema.extend({
    text: z.string()
 })
 
-export const CommentSchema = z.object({
-   id: z.string(),
-   createdBy: z.object({
-      id: z.string(),
-      name: z.string().min(1, "Name required"),
-   }),
-   comment: z.string().min(1, "Comment can't be empty"),
-   lesson: z.object({
-      slug: z.string()
-   }),
-})
+
 
 export type Course = z.infer<typeof CourseSchema>
 export type CourseDB = z.infer<typeof CourseSchemaDB>
@@ -77,6 +79,29 @@ export const lessonFromDB = (lesson: z.infer<typeof LessonSchemaDB>): z.infer<ty
       text: JSON.parse(lesson.text)
    }
 }
+
+export const commentToDB = (comment: Comment): any => {
+   return {
+      id: comment.id,
+      lesson_slug: comment.lesson.slug,
+      created_by: comment.createdBy.id,
+      comment: comment.comment,
+   };
+};
+
+export const commentFromDB = (commentDB: any): Comment => {
+   return {
+      id: commentDB.id,
+      createdBy: {
+      id: commentDB.created_by,
+      name: "",
+   },
+      comment: commentDB.comment,
+      lesson: {
+      slug: commentDB.lesson_slug,
+      },
+   };
+};
 
 // validate data before saving to db
 export const validateCourse = (course: unknown) => {
