@@ -2,7 +2,7 @@ import { z } from "zod";
 
 
 export const LessonSchema = z.object({
-   id: z.string(),
+   id: z.string().uuid("Invalid UUID"),
    title: z.string().min(1, "title required"),
    slug: z.string().min(1, "slug required"),
    preAmble: z.string().optional(),
@@ -13,7 +13,7 @@ export const LessonSchema = z.object({
 })
 
 export const CourseSchema = z.object({
-   id: z.string(),
+   id: z.string().uuid("Invalid UUID"),
    title: z.string().min(1, "title required"),
    slug: z.string().min(1, "slug required"),
    description: z.string().min(1, "description required"),
@@ -41,7 +41,61 @@ export const CommentSchema = z.object({
 })
 
 export type Course = z.infer<typeof CourseSchema>
+export type CourseDB = z.infer<typeof CourseSchemaDB>
 export type Lesson = z.infer<typeof LessonSchema>
+export type LessonDB = z.infer<typeof LessonSchemaDB>
 export type Comment = z.infer<typeof CommentSchema>
 
 
+// Convert course form original course form to data base form 
+export const courseToDB = (course: z.infer<typeof CourseSchema>): z.infer<typeof CourseSchemaDB> => {
+   return {
+      ...course,
+      lessons: JSON.stringify(course.lessons ?? [])
+   }
+}
+
+// Convert course from to data base to original course form
+export const courseFromDB = (course: z.infer<typeof CourseSchemaDB>): z.infer<typeof CourseSchema> => {
+   return {
+      ...course,
+      lessons: JSON.parse(course.lessons || "[]")
+   }
+}
+
+export const lessonToDB = (lesson: z.infer<typeof LessonSchema>): z.infer<typeof LessonSchemaDB> => {
+   return {
+      ...lesson,
+      text: JSON.stringify(lesson.text)
+   }
+}
+
+
+export const lessonFromDB = (lesson: z.infer<typeof LessonSchemaDB>): z.infer<typeof LessonSchema> => {
+   return {
+      ...lesson,
+      text: JSON.parse(lesson.text)
+   }
+}
+
+// validate data before saving to db
+export const validateCourse = (course: unknown) => {
+   const result = CourseSchema.safeParse(course)
+   if (result.success) {
+      return {success: true, data: result.data}
+   } else {
+      return {success: false, error: result.error}
+   }
+   
+}
+
+// validate data before retrieving from db
+export const validateCourseDB = (course: unknown) => {
+   const result = CourseSchemaDB.safeParse(course)
+   if (result.success) {
+      return {success: true, data: result.data}
+   } else {
+      return {success: false, error: result.error}
+   }
+   
+}
