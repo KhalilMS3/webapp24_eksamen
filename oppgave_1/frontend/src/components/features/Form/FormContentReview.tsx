@@ -45,16 +45,13 @@ return (
             </p>
             <p>Tekster: </p>
             <ul data-testid="review_lesson_texts" className="list-inside">
-               {lesson?.text?.length > 0 &&
-               lesson.text.map((text) => (
-                  <li
-                     data-testid="review_lesson_text"
-                     className="mb-1 pl-4"
-                     key={text?.id}
-                  >
-                     {text?.text}
-                  </li>
-               ))}
+                        <li
+                           data-testid="review_lesson_text"
+                           className="mb-1 pl-4"
+                           key={lesson.text}
+                        >
+                           {lesson.text}
+                        </li>
             </ul>
          </li>
          ))}

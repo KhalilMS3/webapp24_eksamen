@@ -1,5 +1,6 @@
 import React from 'react'
 import { Lesson as LessonType } from '@/types'
+import TipTapEditor from './TipTapEditor';
 
 type LessonDetailFormProps = {
   currentLesson: LessonType;
@@ -8,18 +9,18 @@ type LessonDetailFormProps = {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
     index: number
-  ) => void;
-  addTextBox: () => void;
-  removeTextBox: (index: number) => void;
+   ) => void;
+   handleTextEditorChange: (content: string, index: number) => void;
+
 };
 export default function LessonDetailForm(props: LessonDetailFormProps) {
    
    const {
       currentLesson,
       handleLessonFieldChange,
-      addTextBox,
-      removeTextBox
+      handleTextEditorChange,
    } = props
+   
 return (
    <div className="w-full">
    <label className="mb-4 flex flex-col" htmlFor="title">
@@ -58,37 +59,13 @@ return (
          onChange={(e) => handleLessonFieldChange(e, 0)}
       />
    </label>
-   {currentLesson?.text?.map((field, index) => (
-      <div key={field?.id}>
-         <label className="mt-4 flex flex-col" htmlFor={`text-${field?.id}`}>
+         <label className="mt-4 flex flex-col" htmlFor={`text-${currentLesson.id}`}>
          <span className="text-sm font-semibold">Tekst*</span>
-         <textarea
-            data-testid="form_lesson_text"
-            name="text"
-            id={`text-${field?.id}`}
-            value={field?.text}
-            onChange={(event) => handleLessonFieldChange(event, index)}
-            className="w-full rounded bg-slate-100"
-            cols={30}
-         />
          </label>
-         <button
-         className="text-sm font-semibold text-red-400 "
-         type="button"
-         onClick={() => removeTextBox(index)}
-         >
-         Fjern
-         </button>
-      </div>
-   ))}
-   <button
-      className="mt-6 w-full rounded bg-gray-300 px-4 py-3 font-semibold"
-      type="button"
-      onClick={addTextBox}
-      data-testid="form_lesson_add_text"
-   >
-      + Legg til tekstboks
-   </button>
+            <TipTapEditor 
+               content={currentLesson.text}
+               onChange={(content) => handleTextEditorChange(content, Number(currentLesson.id))}/>
+
    </div>
 );
 }

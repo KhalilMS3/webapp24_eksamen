@@ -11,10 +11,7 @@ id: string;
 title: string;
 slug: string;
 preAmble: string;
-text: Array<{
-   id: string;
-   text: string;
-}>
+text: string
 comments: Array<CommentType>
 }
 

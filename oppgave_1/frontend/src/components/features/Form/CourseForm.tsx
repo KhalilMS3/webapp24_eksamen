@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { categories, courseCreateSteps } from "@/data/data";
-import { Course, Lesson as LessonType } from "@/types";
+import { Course, Lesson, Lesson as LessonType } from "@/types";
 import FormNav from "./FormNav";
 import CourseDetailForm from "./CourseDetailForm";
 import LessonsAside from "./LessonsAside";
 import LessonDetailForm from "./LessonDetailForm";
 import FormContentReview from "./FormContentReview";
 import { randomUUID } from "crypto";
-import useCreateCourse from "@/hooks/useCreateCourse";
+import useCreateCourse from "@/hooks/useCreateCategory";
 
 export default function CourseForm() {
   const [success, setSuccess] = useState(false);
@@ -58,41 +58,41 @@ export default function CourseForm() {
     }
   };
 
-  const addTextBox = () => {
-    const updatedLessonText = lessons.map((lesson, i) => {
-      if (currentLesson === i) {
-        const text = [
-          { id: `${Math.floor(Math.random() * 1000 + 1)}`, text: "" },
-        ];
-        if (lesson.text.length === 0) {
-          text.push({
-            id: `${Math.floor(Math.random() * 1000 + 1)}`,
-            text: "",
-          });
-        }
-        return {
-          ...lesson,
-          text: [...lesson.text, ...text],
-        };
-      }
-      return lesson;
-    });
-    setLessons(updatedLessonText);
-  };
+  // const addTextBox = () => {
+  //   const updatedLessonText = lessons.map((lesson, i) => {
+  //     if (currentLesson === i) {
+  //       const text = [
+  //         { id: `${Math.floor(Math.random() * 1000 + 1)}`, text: "" },
+  //       ];
+  //       if (lesson.text.length === 0) {
+  //         text.push({
+  //           id: `${Math.floor(Math.random() * 1000 + 1)}`,
+  //           text: "",
+  //         });
+  //       }
+  //       return {
+  //         ...lesson,
+  //         text: [...lesson.text, ...text],
+  //       };
+  //     }
+  //     return lesson;
+  //   });
+  //   setLessons(updatedLessonText);
+  // };
 
-  const removeTextBox = (index: number) => {
-    const removed = lessons[currentLesson].text.filter((_, i) => i !== index);
-    const updatedLessonText = lessons.map((lesson, i) => {
-      if (currentLesson === i) {
-        return {
-          ...lesson,
-          text: removed,
-        };
-      }
-      return lesson;
-    });
-    setLessons(updatedLessonText);
-  };
+  // const removeTextBox = (index: number) => {
+  //   const removed = lessons[currentLesson].text.filter((_, i) => i !== index);
+  //   const updatedLessonText = lessons.map((lesson, i) => {
+  //     if (currentLesson === i) {
+  //       return {
+  //         ...lesson,
+  //         text: removed,
+  //       };
+  //     }
+  //     return lesson;
+  //   });
+  //   setLessons(updatedLessonText);
+  // };
 
   const handleCourseFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -121,31 +121,41 @@ export default function CourseForm() {
   };
 
   const handleLessonFieldChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
     index: number
   ) => {
     const { name, value } = event.target;
-    let text: any;
-    if (lessons[currentLesson]?.text?.length === 0) {
-      text = [{ id: `${Math.floor(Math.random() * 1000 + 1)}`, text: "" }];
-    }
-    if (lessons[currentLesson]?.text?.length > 0) {
-      text = lessons[currentLesson]?.text?.map((_text, i) => {
-        if (i === index) {
-          return { id: _text.id, [name]: value };
-        }
-        return _text;
-      });
-    }
 
     const updatedLessons = lessons.map((lesson, i) => {
       if (i === currentLesson) {
-        return { ...lesson, [name]: value, text: text?.length > 0 ? text : [] };
+        return {
+          ...lesson,
+          [name]: value,
+          text: lesson.text,
+          comments: lesson.comments || [],
+        };
       }
       return lesson;
     });
-    setLessons(updatedLessons);
+
+    setLessons(updatedLessons as LessonType[]);
   };
+
+  const handleTextEditorChange = (content: string, index: number) => {
+      const updatedLessons = lessons.map((lesson, i) => {
+        if (i === currentLesson) {
+          return {
+            ...lesson,
+            text: content,
+            comments: lesson.comments || []
+          }
+        }
+        return lesson;
+      });
+      setLessons(updatedLessons as LessonType[]);
+    }; 
 
   const changeCurrentLesson = (index: number) => {
     setCurrentLesson(index);
@@ -159,7 +169,7 @@ export default function CourseForm() {
         title: "",
         slug: "",
         preAmble: "",
-        text: [],
+        text: "",
         order: `${lessons.length}`,
         comments: []
       },
@@ -203,8 +213,7 @@ export default function CourseForm() {
               <LessonDetailForm
                 currentLesson={lessons[currentLesson]}
                 handleLessonFieldChange={handleLessonFieldChange}
-                addTextBox={addTextBox}
-                removeTextBox={removeTextBox}
+                handleTextEditorChange={handleTextEditorChange}
               />
             )}
           </div>

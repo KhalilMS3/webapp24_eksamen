@@ -52,17 +52,15 @@ export default function Lesson() {
         >
         {lesson?.preAmble}
       </p>
-      {lesson?.text &&
-        lesson.text.length > 0 &&
-        lesson.text.map((text) => (
-          <p
+        <p
           data-testid="lesson_text"
           className="mt-4 font-normal"
-          key={text.id}
-          >
-            {text.text}
-          </p>
-        ))}
+          dangerouslySetInnerHTML={{__html: lesson?.text || ""}}
+
+        >
+          
+            
+        </p>
       {/* Kommentarseksjon */}
       <section data-testid="comments">
         <h4 className="mt-8 mb-4 text-lg font-bold">

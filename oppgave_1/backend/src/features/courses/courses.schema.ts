@@ -17,10 +17,7 @@ export const LessonSchema = z.object({
    title: z.string().min(1, "title required"),
    slug: z.string().min(1, "slug required"),
    preAmble: z.string().optional(),
-   text: z.array(z.object({
-      id: z.string(),
-      text: z.string().min(1, "text can't be empty")
-   })),
+   text:  z.string().min(1, "text can't be empty"),
    comments: z.array(CommentSchema).optional()
 })
 
@@ -68,7 +65,7 @@ export const courseFromDB = (course: z.infer<typeof CourseSchemaDB>): z.infer<ty
 export const lessonToDB = (lesson: z.infer<typeof LessonSchema>): z.infer<typeof LessonSchemaDB> => {
    return {
       ...lesson,
-      text: JSON.stringify(lesson.text)
+      text: lesson.text
    }
 }
 
@@ -76,7 +73,7 @@ export const lessonToDB = (lesson: z.infer<typeof LessonSchema>): z.infer<typeof
 export const lessonFromDB = (lesson: z.infer<typeof LessonSchemaDB>): z.infer<typeof LessonSchema> => {
    return {
       ...lesson,
-      text: JSON.parse(lesson.text)
+      text: lesson.text
    }
 }
 
