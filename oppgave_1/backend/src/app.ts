@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { courseRepository } from "./features/courses/courses.repository";
-import { error } from "console";
 import { validateCourse } from "./features/courses/courses.services";
 
 const app = new Hono();

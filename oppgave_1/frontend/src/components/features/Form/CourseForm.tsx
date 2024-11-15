@@ -1,13 +1,15 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { categories, courseCreateSteps, courses } from "@/data/data";
+import { categories, courseCreateSteps } from "@/data/data";
 import { Course, Lesson as LessonType } from "@/types";
 import FormNav from "./FormNav";
 import CourseDetailForm from "./CourseDetailForm";
 import LessonsAside from "./LessonsAside";
 import LessonDetailForm from "./LessonDetailForm";
 import FormContentReview from "./FormContentReview";
+import { randomUUID } from "crypto";
+import useCreateCourse from "@/hooks/useCreateCourse";
 
 export default function CourseForm() {
   const [success, setSuccess] = useState(false);
@@ -15,7 +17,7 @@ export default function CourseForm() {
   const [current, setCurrent] = useState<number>(0);
   const [currentLesson, setCurrentLesson] = useState<number>(0);
   const [courseFields, setCourseFields] = useState<Course>({
-    id: `${Math.floor(Math.random() * 1000 + 1)}`,
+    id: `${randomUUID}`,
     title: "",
     slug: "",
     description: "",
@@ -25,12 +27,8 @@ export default function CourseForm() {
   const [lessons, setLessons] = useState<LessonType[]>([]);
 
   const router = useRouter();
-
-  const createCourse = async (data: Course) => {
-    await courses.push(data);
-  };
-
-  // SRC: Kilde: ChatGPT: corrugiation of syntax error
+  const { createCourse, loading, error } = useCreateCourse()
+  
   const isValid = (items: any): boolean => {
     if (typeof items !== "object" || items === null) {
       return false;
@@ -163,6 +161,7 @@ export default function CourseForm() {
         preAmble: "",
         text: [],
         order: `${lessons.length}`,
+        comments: []
       },
     ]);
     setCurrentLesson(lessons.length);
