@@ -9,65 +9,65 @@ const app = new Hono();
 app.use("/*", cors());
 
 app.get('/api/courses', async (c) => {
-  const result = await courseRepository.list()
-  if (result.success) {
-    return c.json(result.data, 200)
+  const updatedCourse = await courseRepository.list()
+  if (updatedCourse.success) {
+    return c.json(updatedCourse.data, 200)
   } else {
-    return c.json({error: result.error}, 500)
+    return c.json({error: updatedCourse.error}, 500)
   }
 })
 
 app.get('/api/courses/:courseSlug', async (c) => {
   const courseSlug = c.req.param('courseSlug')
-  const result = await courseRepository.getCourseBySlug(courseSlug)
-  if (result.success){
-    return c.json(result.data, 200)
+  const updatedCourse = await courseRepository.getCourseBySlug(courseSlug)
+  if (updatedCourse.success){
+    return c.json(updatedCourse.data, 200)
   } else {
-    return c.json({ error: result.error }, 500)
+    return c.json({ error: updatedCourse.error }, 500)
   }
 })
 app.get('/api/courses/:courseSlug/:lessonSlug', async (c) => { 
 
   const courseSlug = c.req.param('courseSlug')
   const lessonSlug = c.req.param('lessonSlug')
-  const lessonResult = await courseRepository.getLessonBySlug(courseSlug, lessonSlug)
-  if (!lessonResult.success) {
-    return c.json({success: false, error: lessonResult.error}, 404)
+  const lessonupdatedCourse = await courseRepository.getLessonBySlug(courseSlug, lessonSlug)
+  if (!lessonupdatedCourse.success) {
+    return c.json({success: false, error: lessonupdatedCourse.error}, 404)
   }
-  return c.json({success: true, data: lessonResult.data}, 200)
+  return c.json({success: true, data: lessonupdatedCourse.data}, 200)
 })
 
 app.post('/api/courses', async (c) => {
   try {
     const courseBody = await c.req.json()
-    const validateCourseResult = validateCourse(courseBody)
+    const validateCourseupdatedCourse = validateCourse(courseBody)
 
-    if (!validateCourseResult.success) {
-      return c.json({error: validateCourseResult.error}, 400)
+    if (!validateCourseupdatedCourse.success) {
+      return c.json({error: validateCourseupdatedCourse.error}, 400)
     }
-    const result = await courseRepository.create(courseBody)
-    if (result.success) {
-      return c.json(result.data, 201)
+    const updatedCourse = await courseRepository.create(courseBody)
+    if (updatedCourse.success) {
+      return c.json(updatedCourse.data, 201)
     } else {
-      return c.json({error: result.error}, 400)
+      return c.json({error: updatedCourse.error}, 400)
     }
   } catch (error) {
     return c.json({error: "invalid body format"}, 400)
   }
 })
 
-app.patch('/api/courses/:slug', async (c) => {
-  const slug = c.req.param('slug')
+app.patch('/api/courses/:courseSlug', async (c) => {
+  const courseSlug = c.req.param('courseSlug')
   const { category } = await c.req.json()
   try {
     if (!category) {
       return c.json({error: "Category required"}, 400)
     }
-    const result = await courseRepository.update(slug, { category })
-    if (result.success) {
-      return c.json(result.data, 200)
+    const updatedCourse = await courseRepository.update(courseSlug, { category })
+    if (updatedCourse.success) {
+      return c.json(updatedCourse.data, 200)
     } else {
-      return c.json({error: result.error}, 400)
+      return c.json({error: updatedCourse.error}, 400)
     }
   } catch (error) {
       return c.json({error: "invalid data"}, 400)
@@ -76,9 +76,9 @@ app.patch('/api/courses/:slug', async (c) => {
 
 app.delete('/api/courses/:slug', async (c) => {
   const slug = c.req.param('slug')
-  const result = await courseRepository.delete(slug)
+  const updatedCourse = await courseRepository.delete(slug)
 
-  if (result.success) {
+  if (updatedCourse.success) {
     return c.json({message: "Course deleted successfully"}, 200)
   } else {
     return c.json({message: "Course not found"}, 404) 
