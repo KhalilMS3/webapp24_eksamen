@@ -15,6 +15,7 @@ text: Array<{
    id: string;
    text: string;
 }>
+comments: Array<CommentType>
 }
 
 export type CommentType = {

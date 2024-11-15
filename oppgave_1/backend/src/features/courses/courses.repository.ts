@@ -185,17 +185,20 @@ export const createCourseRepository = (db: any): CourseRepository => {
                SELECT * FROM Comment WHERE lesson_slug = ?
                `).all(lessonRow.slug)
             
-            const comments = commentsRows.map((commentRow: any) => ({
+            const comments = commentsRows.map((commentRow: any) => {
+               const createdBy = JSON.parse(commentRow.created_by)
+               return{
                   id: commentRow.id,
                   createdBy: {
-                     id: commentRow.created_by.id,
-                     name: commentRow.created_by.name,
+                     id: createdBy.id,
+                     name: createdBy.name,
                   },
                   comment: commentRow.comment,
-                     lesson: {
+                  lesson: {
                      slug: lessonSlug
                   }
-            }))
+               }
+            })
             const lessonWithComments: Lesson = {
                ...lessonFromDB(lessonRow),
                comments,

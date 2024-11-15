@@ -1,5 +1,6 @@
+import { BASE_URL } from '@/config/urls'
 import { Course } from '@/types'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function useCourseDetails(courseSlug: string) {
    const [course, setCourse] = useState<Course | null>(null)
@@ -10,7 +11,7 @@ export default function useCourseDetails(courseSlug: string) {
       setLoading(true)
       setError(null)
       try {
-         const result = await fetch(`/api/course/${courseSlug}`)
+         const result = await fetch(`${BASE_URL}/api/courses/${courseSlug}`)
          if (!result.ok) {
             console.error("Error fetching course from server:", result.statusText)
          }

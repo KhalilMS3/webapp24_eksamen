@@ -1,18 +1,25 @@
-import { courses, users } from '@/data/data';
+import { users } from '@/data/data';
+import useCourseDetails from '@/hooks/useCourseDetails';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren } from 'react'
 
 export default function CourseLayout({ children }: PropsWithChildren) {
-const [course, setCourse] = useState<any>(null)
-const params = useParams() as Record<string, string>
-const { courseSlug, lessonSlug } = params
+   const params = useParams() as Record<string, string>
+   const { courseSlug, lessonSlug } = params
+   const {course, loading, error} = useCourseDetails(courseSlug)   
+   
+   if (loading) {
+      return <p>Laster inn kurs informasjon...</p>
+   }
+   if (error) {
+     return <p>Kunne ikke hente kurs informasjon...</p>;
+   }
 
-useEffect(() => {
-   const courseData = courses.find((course) => course.slug === courseSlug)
-   setCourse(courseData)
-})
-return (
+   if (!course) {
+     return <p>Kurset ble ikke funnet!</p>;
+   }
+   return (
    <>
    <div className="grid grid-cols-[250px_minmax(20%,1fr)_1fr] gap-16">
       <aside className="border-r border-slate-200 pr-6">

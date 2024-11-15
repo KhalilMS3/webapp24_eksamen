@@ -12,7 +12,7 @@ lessonSlug: string,
 export default function Lessons({courseSlug, lessonSlug}: LessonsProps) {
    return (
       <>
-   <Lesson></Lesson>
+   <Lesson/>
    <ul>
    {courseSlug?.map((lesson) => (
       <li

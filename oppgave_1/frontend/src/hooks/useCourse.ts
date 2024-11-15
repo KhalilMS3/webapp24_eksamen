@@ -1,3 +1,4 @@
+import { BASE_URL } from '@/config/urls'
 import { Course } from '@/types'
 import React, { useEffect, useState } from 'react'
 
@@ -7,11 +8,12 @@ export default function useCourse() {
    const [loading, setLoading] = useState<boolean>(true)
    const [error, setError] = useState<string | null>(null)
 
+   useEffect(() => {
    const fetchCoursesFromServer = async () => {
       setLoading(true)
       setError(null)
       try {
-         const response = await fetch('/api/courses')
+         const response = await fetch(`${BASE_URL}/api/courses`)
          if (!response.ok) {
             console.log("Error fetching from Server", response.statusText)
          }
@@ -23,9 +25,8 @@ export default function useCourse() {
          setLoading(false)
       }
    }
-   useEffect(() => {
       fetchCoursesFromServer()
-   })
+   },[])
    
    return {courses, loading, error}
 }

@@ -1,29 +1,40 @@
 "use client";
-import { useState, } from "react";
-import {
-categories,
-courses,
-} from "@/data/data";
+import { useEffect, useState, } from "react";
+import { categories } from "@/data/data";
 import CourseCard from "./CourseCard";
+import useCourse from "@/hooks/useCourse";
+import { Course } from "@/types";
 
 export default function Courses() {
-
-const [value, setValue] = useState("");
-const [data, setData] = useState(courses);
-
-const handleFilter = (event: any) => {
+  const {courses, loading, error} = useCourse()
+  const [value, setValue] = useState("");
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>( [])
+  
+  const handleFilter = (event: any) => {
   const category = event.target.value;
   setValue(category);
   if (category && category.length > 0) {
-    const content = courses.filter((course) =>
+    const content = (courses || []).filter((course) =>
       course.category.toLocaleLowerCase().includes(category.toLowerCase())
     );
-    setData(content);
+    setFilteredCourses(content);
   } else {
-    setData(courses);
+    setFilteredCourses(courses || []);
   }
-};
+  };
+  
+  useEffect(() => {
+    if (courses) {
+      setFilteredCourses(courses)
+    }
+  },[courses])
 
+  if (loading) {
+    return <p>Laster inn kurs...</p>
+  }
+  if (error) {
+    return <p>Kunne ikke hente kurs: {error}</p>
+  }
 return (
   <>
     <header className="mt-8 flex items-center justify-between">
@@ -50,8 +61,8 @@ return (
       </label>
     </header>
     <section className="mt-6 grid grid-cols-3 gap-8" data-testid="courses">
-      {data && data.length > 0 ? (
-        data.map((course) => (
+      {filteredCourses && filteredCourses.length > 0 ? (
+        filteredCourses.map((course) => (
           <CourseCard key={course.id} course={course}/>
         ))
       ) : (

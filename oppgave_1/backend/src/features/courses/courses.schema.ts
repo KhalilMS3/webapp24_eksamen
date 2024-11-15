@@ -93,8 +93,8 @@ export const commentFromDB = (commentDB: any): Comment => {
    return {
       id: commentDB.id,
       createdBy: {
-      id: commentDB.created_by,
-      name: "",
+      id: commentDB.created_by.id,
+      name: commentDB.created_by.name || "",
    },
       comment: commentDB.comment,
       lesson: {
