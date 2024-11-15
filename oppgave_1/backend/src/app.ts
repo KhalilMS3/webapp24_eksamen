@@ -73,16 +73,18 @@ app.patch('/api/courses/:courseSlug', async (c) => {
   }
 })
 
-app.delete('/api/courses/:slug', async (c) => {
-  const slug = c.req.param('slug')
-  const updatedCourse = await courseRepository.delete(slug)
+app.delete('/api/courses/:courseSlug', async (c) => {
+  const courseSlug = c.req.param('courseSlug')
+  const deleteCourse = await courseRepository.delete(courseSlug)
 
-  if (updatedCourse.success) {
+  if (deleteCourse.success) {
     return c.json({message: "Course deleted successfully"}, 200)
   } else {
     return c.json({message: "Course not found"}, 404) 
   }
 })
+
+
 app.onError((err, c) => {
   console.error(err);
   

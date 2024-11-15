@@ -4,12 +4,14 @@ import CourseLayout from "@/components/layout/CourseLayout";
 import useCourseDetails from "@/hooks/useCourseDetails";
 import useUpdateCourseCategory from "@/hooks/useUpdateCourseCategory";
 import { useState } from "react";
+import useDeleteCourse from "@/hooks/useDeleteCourse";
 
 export default function Course() {
   const params = useParams() as Record<string, string>;
   const { courseSlug } = params;
   const {course, loading, error} = useCourseDetails(courseSlug)
   const { updateCategory, loading: updateLoading, error: updateError} = useUpdateCourseCategory()
+  const {deleteCourse, loading: loadingDelete ,error: deleteError} = useDeleteCourse() 
   const [category, setCategory] = useState<string>(course?.category || "")
   
     
@@ -65,13 +67,21 @@ export default function Course() {
           onChange={(e) => setCategory(e.target.value)}
           className="w-full px-4 py-2 mb-4 border rounded"
         />
-        <button
-          onClick={handleUpdateCategory}
-          className="px-4 py-2 text-white bg-emerald-600 rounded"
-          disabled={updateLoading}
-        >
-          {updateLoading ? "Oppdaterer..." : "Oppdater Kategori"}
-        </button>
+        <section className="flex justify-between">
+          <button
+            onClick={handleUpdateCategory}
+            className="px-4 py-2 text-white bg-emerald-600 rounded"
+            disabled={updateLoading}
+          >
+            {updateLoading ? "Oppdaterer..." : "Oppdater Kategori"}
+          </button>
+          <button className="px-4 py-2 text-white bg-red-600 rounded"
+            onClick={() => deleteCourse(courseSlug)}
+            disabled = {loadingDelete}
+          >
+            {loadingDelete ? "Sletter Kurs..." : "Slett kurs X"}
+          </button>
+        </section>
         {updateError && <p className="text-red-500 mt-2">{updateError}</p>}
       </section>
     </CourseLayout>
