@@ -13,19 +13,61 @@ test.describe("Oppgave 1 Create", () => {
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
     page = await context.newPage();
-    await page.goto("/");
+    await page.goto("/courseForm");
   });
+  
+
   test.describe("When showing create page", () => {
-    test("Should have test-id steps", () => {});
-    test("Should have test-id form_submit", () => {});
-    test("Should have test-id title", () => {});
-    test("Should have test-id form", () => {});
-    test("Should have test-id course_step", () => {});
-    test("Should have test-id form_title", () => {});
-    test("Should have test-id form_slug", () => {});
-    test("Should have test-id form_description", () => {});
-    test("Should have test-id form_category", () => {});
+    test("Should have test-id steps", async () => {
+      // we should wait for the selector before checking if it is "available/visible"
+      await page.waitForSelector('[data-testid="steps"]')
+      const stepsLocator = await page.locator('[data-testid="steps"]')
+      await expect(stepsLocator).toBeVisible({ timeout: 10000 })
+    });
+    test("Should have test-id form_submit", async () => {
+      await page.waitForSelector('[data-testid="form_submit"]')
+      const submitLocator = await page.locator('[data-testid="form_submit"]')
+      await expect(submitLocator).toBeVisible({ timeout: 10000 })
+    });
+    test("Should have test-id title", async () => {
+      await page.waitForSelector('[data-testid="title"]')
+      const titleLocator = await page.locator('[data-testid="title"]');
+      await expect(titleLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id form", async () => {
+      await page.waitForSelector('[data-testid="form"]')
+      const formLocator = await page.locator('[data-testid="form"]');
+      await expect(formLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id course_step", async () => {
+      await page.waitForSelector('[data-testid="course_step"]')
+      const courseStepLocator = await page.locator('[data-testid="course_step"]');
+      await expect(courseStepLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id form_title", async () => {
+      await page.waitForSelector('[data-testid="form_title"]')
+      const formTitleLocator = await page.locator('[data-testid="form_title"]');
+      await expect(formTitleLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id form_slug", async () => {
+      await page.waitForSelector('[data-testid="form_slug"]')
+      const formSlugLocator = await page.locator('[data-testid="form_slug"]');
+      await expect(formSlugLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id form_description", async () => {
+      await page.waitForSelector('[data-testid="form_description"]')
+      const formDescriptionLocator = await page.locator('[data-testid="form_description"]');
+      await expect(formDescriptionLocator).toBeVisible({ timeout: 10000 });
+    });
+    test("Should have test-id form_category", async () => {
+      await page.waitForSelector('[data-testid="form_category"]')
+      const formCategoryLocator = await page.locator('[data-testid="form_category"]');
+      await expect(formCategoryLocator).toBeVisible({ timeout: 10000 });
+    });
   });
+})
+
+/*
   test.describe("When stepping from first to second step", () => {
     test("Should show error if any required field are missing", async () => {});
     test("Should show error if title field is missing", async () => {});
@@ -33,7 +75,8 @@ test.describe("Oppgave 1 Create", () => {
     test("Should show error if description field is missing", async () => {});
     test("Should show error if category field is missing", async () => {});
     test("Should not show error if all fields are provided", async () => {});
-  });
+});
+
   test.describe("When at step two", () => {
     test("Should have disabled submit btn", async () => {});
     test("Should have no errors", async () => {});
@@ -73,4 +116,4 @@ test.describe("Oppgave 1 Create", () => {
     test("Should get response 200 from server", async () => {});
     test("Should get correct data from server", async () => {});
   });
-});
+}); */
