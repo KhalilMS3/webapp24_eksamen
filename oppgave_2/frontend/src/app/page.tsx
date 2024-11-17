@@ -1,4 +1,6 @@
-export default function Home() {
-  return <h1>Oppgave 2</h1>;
-}
+import StartScreen from "@/components/StartScreen";
 import React from "react";
+
+export default function Home() {
+  return <StartScreen />;
+}
