@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link';
 import React from 'react'
 type EventCardProps = {
@@ -49,7 +51,7 @@ export default function EventCard(props: EventCardProps) {
         <li></li>
       </ul>
       <Link
-        href={`kunde/arrangementer/${slug}`}
+        href={`/kunde/arrangementer/${slug}`}
         className="bg-gradient-to-l from-blue-400 to-blue-500 text-white font-medium  text-center p-2 mt-5 rounded-md"
       >
         Til arrangement
