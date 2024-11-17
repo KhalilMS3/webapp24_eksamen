@@ -3,12 +3,18 @@ import EventCard from "./EventCard";
 import { events } from "@/data/data";
 import {format} from "date-fns"
 import FilterAside from "./FilterAside";
+import Header from "../layout/Header";
 export default function Events() {
   return (
     <>
+      <Header>
+        <ul>
+          <li>(Kundeside)</li>
+        </ul>
+      </Header>
       <section className="p-10 flex gap-40">
         <section>
-          <h2 className="text-3xl mb-10 font-bold">Arrangements</h2>
+          <h2 className="text-3xl mb-10 font-bold">Arrangementer</h2>
           <section className="flex flex-wrap justify-items-stretch gap-3 ">
             {events?.map((event) => {
               const date = format(new Date(event.date), "dd/MM/yyyy hh:mm");
