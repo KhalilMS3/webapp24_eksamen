@@ -7,7 +7,6 @@ type EventCardProps = {
   slug: string,
   description: string,
   date: string,
-  location: string,
   type: string,
   price: number,
   status: string,
@@ -15,7 +14,7 @@ type EventCardProps = {
 
 export default function EventCard(props: EventCardProps) {
   const {
-    title, slug, description, date, location, type, price, status
+    title, slug, description, date, type, price, status
   } = props
   return (
     <article className="flex flex-col p-5 gap-3 w-3/12 border-black border rounded-md shadow-md hover:shadow-lg cursor-pointer	">
