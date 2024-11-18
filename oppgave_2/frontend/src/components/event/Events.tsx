@@ -20,23 +20,31 @@ export default function Events() {
       status
       })
 return (
-    <>
-      <Header>
-        <ul>
-          <li>(Kundeside)</li>
-        </ul>
-      </Header>
-    <section className="p-10 flex gap-40 ">
-      <FilterAside
+  <>
+    <Header>
+      <ul>
+        <li>(Kundeside)</li>
+      </ul>
+    </Header>
+    <section className="p-10 flex gap-20">
+      <section className="w-1/6">
+
+        <FilterAside
+        month={month}
+        year={year}
+        type={type}
+        status={status}
         setMonth={setMonth}
         setYear={setYear}
         setType={setType}
         setStatus={setStatus}
         />
-        <section className="grow">
-          <h2 className="text-3xl mb-10 font-bold">Arrangementer</h2>
-          <section className="flex flex-wrap justify-items-stretch gap-3 ">
-            {filteredEvents?.map((event) => {
+        </section>
+      <section className="w-4/5">
+        <h2 className="text-3xl mb-10 font-bold">Arrangementer</h2>
+        <section className="flex flex-wrap justify-items-stretch gap-3">
+          {filteredEvents.length > 0 ? (
+            filteredEvents?.map((event) => {
               const date = format(new Date(event.date), "dd/MM/yyyy");
               return (
                 <EventCard
@@ -50,10 +58,13 @@ return (
                   status={event.status}
                 />
               );
-            })}
-          </section>
+            })
+          ) : (
+            <p>Ingen resultater for valgte filtrene 🫤</p>
+          )}
         </section>
       </section>
-    </>
-  );
+    </section>
+  </>
+);
 }

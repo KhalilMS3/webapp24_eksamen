@@ -2,6 +2,10 @@ import { generateYears, months } from '@/data/data'
 import React from 'react'
 
 type FilterAsideProps = {
+  month: string | null,
+  year: string | null,
+  type: string | null,
+  status: string | null,
   setMonth: (value: string | null) => void
   setYear: (value: string | null) => void
   setType: (value: string | null) => void
@@ -9,19 +13,27 @@ type FilterAsideProps = {
 }
 export default function FilterAside(props: FilterAsideProps) {
   const {
+    month, year, type, status,
     setMonth, setYear, setType, setStatus
   } = props
 
+  const handleReset = () => {
+    setMonth(null)
+    setYear(null)
+    setType(null)
+    setStatus(null)
+  }
   // Auto generate of years, 3 years before and after current year
   const years = generateYears(-3, 3);
   return (
-    <aside className="p-5 w-1/4  bg-rounded-md">
+    <aside className="p-5 bg-rounded-md">
       <h3 className="font-semibold mb-3">Filterer arrangementer</h3>
       <section className="flex flex-col gap-4">
         <label htmlFor="year-filter">År</label>
         <select
           name="year-filter"
           id="year-filter"
+          value={year || ""}
           className="border rounded p-3"
           onChange={(e) => setYear(e.target.value || null)}
         >
@@ -36,6 +48,7 @@ export default function FilterAside(props: FilterAsideProps) {
         <select
           name="month-filter"
           id="month-filter"
+          value={month || ""}
           className="border rounded p-3"
           onChange={(e) => setMonth(e.target.value || null)}
         >
@@ -50,6 +63,7 @@ export default function FilterAside(props: FilterAsideProps) {
         <select
           id="type"
           onChange={(e) => setType(e.target.value || null)}
+          value={type || ""}
           className="p-2 border rounded"
         >
           <option value="">Alle</option>
@@ -61,7 +75,9 @@ export default function FilterAside(props: FilterAsideProps) {
         </select>
         <label htmlFor="status">Status</label>
         <select
+          name="status"
           id="status"
+          value={status || ""}
           onChange={(e) => setStatus(e.target.value || null)}
           className="p-2 border rounded"
         >
@@ -69,6 +85,12 @@ export default function FilterAside(props: FilterAsideProps) {
           <option value="Ledig">Ledig</option>
           <option value="Fullbooket">Fullbooket</option>
         </select>
+        <button
+          onClick={handleReset}
+          className="rounded p-3 bg-green-600 text-white font-semibold"
+        >
+          Reset Filter
+        </button>
       </section>
     </aside>
   );
