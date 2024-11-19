@@ -21,16 +21,12 @@ export default function EventCard(props: EventCardProps) {
       <section className="flex justify-between mb-10">
         <h3 className="font-semibold">{title}</h3>
         {status === "Fullbooket" ? (
-          <p>
-            <span className=" text-white font-medium px-2 py-1 rounded-md border-red-600 border-solid border-2 bg-red-500/75">
+          <p className=" text-white font-medium px-2 py-1 rounded-md border-red-600 border-solid border-2 bg-red-500/75">
               Fullbooket
-            </span>
           </p>
         ) : (
-          <p>
-            <span className=" text-white font-medium px-2 py-1 rounded-md border-green-600 border-solid border-2 bg-green-500/75">
+          <p className=" text-white font-medium px-2 py-1 rounded-md border-green-600 border-solid border-2 bg-green-500/75">
               Ledig
-            </span>
           </p>
         )}
       </section>

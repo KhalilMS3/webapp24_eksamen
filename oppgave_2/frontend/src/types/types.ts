@@ -12,5 +12,4 @@ export type EventType = {
    waitlistAvailable: boolean,
    availableSpots: number,
    status: string
-      
 }
