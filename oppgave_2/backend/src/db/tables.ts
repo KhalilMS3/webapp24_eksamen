@@ -16,6 +16,7 @@ export const createTables = (db: DB) => {
             is_private INTEGER DEFAULT 0,
             waitlist_available INTEGER DEFAULT 0,
             available_spots INTEGER,
+            status TEXT;
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP
          );
