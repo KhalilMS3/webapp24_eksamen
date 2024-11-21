@@ -1,4 +1,4 @@
-export type EventType = {
+export type Event = {
    id: string,
    title: string,
    slug: string,
