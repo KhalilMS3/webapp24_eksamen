@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import EventController from "./features/events/event.controller";
 
 const app = new Hono();
 
@@ -18,4 +19,5 @@ app.onError((err, c) => {
   );
 });
 
+app.route('/api', EventController)
 export default app;
