@@ -1,5 +1,5 @@
 import { Result } from "@/types";
-import { Event, eventSchema } from "./event.schema";
+import { Event, eventSchema, eventUpdateSchema } from "./event.schema";
 import { EventRepository } from "./event.repository";
 import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
@@ -52,8 +52,12 @@ class createEventService {
 
    async updateEvent(id: string, data: any): Promise<Result<Event>>{
       try {
-         const parsedEvenData = eventSchema.parse(data)
-         return await EventRepository.updateEvent(id, parsedEvenData)
+         const parsedEvenData = eventUpdateSchema.parse(data)
+         const updatedEventData = {
+            ...parsedEvenData,
+            id: id
+         }
+         return await EventRepository.updateEvent(id, updatedEventData)
       } catch (error) {
          if (error instanceof z.ZodError) {
             return {

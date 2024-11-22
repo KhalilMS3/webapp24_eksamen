@@ -111,6 +111,7 @@ export const createEventRepository = (db: any): EventRepository => {
                eventData.waitlist_available,
                eventData.available_spots,
                eventData.status,
+               id
             )
             return{success: true, data}
          } catch (error: any) {

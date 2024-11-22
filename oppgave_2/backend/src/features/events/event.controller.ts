@@ -61,7 +61,7 @@ EventController.patch('/events/:id', async (c) => {
       if (error instanceof z.ZodError) {
          return c.json({ success: false, error: error.errors }, 400)
       }
-      return c.json({ success: false, error: "Failed to update project" }, 500)
+      return c.json({ success: false, error: "Failed to update project" }, 400)
    }
 })
 EventController.delete('/events/:slug', async (c) => {

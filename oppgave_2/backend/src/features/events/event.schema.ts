@@ -43,6 +43,9 @@ export const eventToDB = (event: z.infer<typeof eventSchema>): z.infer<typeof ev
    }
 }
 
+export const eventUpdateSchema = eventSchema.omit({ id: true })
+
+
 
 export const validateEvent = (data: unknown) => {
    const result = eventSchema.safeParse(data)
