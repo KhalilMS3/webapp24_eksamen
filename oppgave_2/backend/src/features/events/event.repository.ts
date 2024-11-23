@@ -24,7 +24,7 @@ export const createEventRepository = (db: any): EventRepository => {
             return {success: true, data: events}
          }
          catch(error: any) {
-            console.log("Error listing events from Database:", error)
+            console.error("Error listing events from Database:", error)
             return {success: false, error: error.message}
 
          }

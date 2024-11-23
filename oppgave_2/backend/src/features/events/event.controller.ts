@@ -5,7 +5,7 @@ import { error } from "console";
 
 const EventController = new Hono()
 
-EventController.get('/events', async (c) => {
+EventController.get('/', async (c) => {
    const result = await EventService.listEvents()
 
    if (!result.success) {
@@ -14,27 +14,27 @@ EventController.get('/events', async (c) => {
    return c.json(result.data, 200)
 })
 
-EventController.get('/events/:slug', async (c) => {
+EventController.get('/:slug', async (c) => {
    const slug = c.req.param('slug')
 
    const result = await EventService.getEventBySlug(slug)
    if (!result.success) {
       return c.json({success: false, error: result.error.message}, 404)
    } 
-   return c.json(result.data, 200)
+   return c.json({ success: true, data: result.data }, 200)
 })
 
-EventController.post('/events', async (c) => {
-      try {
+EventController.post('/', async (c) => {
+   try {
       const body = await c.req.json()
       console.log("Received event data:", body)
 
       const response = await EventService.createEvent(body)
 
       if (!response.success) {
-         return c.json({success: false, error: response.error.message})
+         return c.json({ success: false, error: response.error.message })
       }
-      return c.json(response.data, 201)
+      return c.json({success: true, data: response.data}, 201)
    } catch (error) {
       console.error("Error creating project:", error)
       if (error instanceof z.ZodError) {
@@ -44,7 +44,7 @@ EventController.post('/events', async (c) => {
    }
 })
 
-EventController.patch('/events/:id', async (c) => {
+EventController.patch('/:id', async (c) => {
    try {
       const id = c.req.param('id')
       const body = await c.req.json()
@@ -55,7 +55,7 @@ EventController.patch('/events/:id', async (c) => {
       if (!response.success) {
          return c.json({success: false, error: response.error.message})
       }
-      return c.json(response.data, 200)
+      return c.json({success: true, data: response.data }, 200)
    } catch (error) {
       console.error("Error updating event:", error);
       if (error instanceof z.ZodError) {
@@ -64,7 +64,7 @@ EventController.patch('/events/:id', async (c) => {
       return c.json({ success: false, error: "Failed to update project" }, 400)
    }
 })
-EventController.delete('/events/:slug', async (c) => {
+EventController.delete('/:slug', async (c) => {
    try {
       const slug = c.req.param('slug')
       const response = await EventService.deleteEvent(slug)

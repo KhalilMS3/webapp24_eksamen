@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const BookingController = new Hono()
 
-BookingController.get('/bookings', async (c) => {
+BookingController.get('/', async (c) => {
    const result = await BookingService.listBookings()
 
    if (!result.success) {
@@ -15,7 +15,7 @@ BookingController.get('/bookings', async (c) => {
       return c.json({ success: true, data: result.data }, 200)
 })
 
-BookingController.get('/bookings/:id', async (c) => {
+BookingController.get('/:id', async (c) => {
    const id = c.req.param('id')
    const result = await BookingService.getBookingById(id)
 
@@ -26,7 +26,7 @@ BookingController.get('/bookings/:id', async (c) => {
    return c.json({ success: true, data: result.data }, 200)
 })
 
-BookingController.post('/bookings', async (c) => {
+BookingController.post('/', async (c) => {
    try {
       const body = await c.req.json()
       console.log("Received booking data:", body)
@@ -46,7 +46,7 @@ BookingController.post('/bookings', async (c) => {
    }
 })
 
-BookingController.patch('/bookings/:id', async (c) => {
+BookingController.patch('/:id', async (c) => {
    try {
       const id = c.req.param('id')
       const body = await c.req.json()
@@ -68,7 +68,7 @@ BookingController.patch('/bookings/:id', async (c) => {
    }
 })
 
-BookingController.delete('/bookings/:id', async (c) => {
+BookingController.delete('/:id', async (c) => {
    const id = c.req.param('id')
    const result = await BookingService.deleteBooking(id)
 

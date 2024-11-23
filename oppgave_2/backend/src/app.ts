@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import EventController from "./features/events/event.controller";
+import BookingController from "./features/bookings/booking.controller";
+import ParticipantController from "./features/participants/participant.controller";
 
 const app = new Hono();
 
@@ -19,5 +21,7 @@ app.onError((err, c) => {
   );
 });
 
-app.route('/api', EventController)
+app.route('/api/events', EventController)
+app.route('/api/bookings', BookingController)
+app.route('/api/participants', ParticipantController)
 export default app;
