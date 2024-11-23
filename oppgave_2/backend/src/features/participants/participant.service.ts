@@ -3,6 +3,7 @@ import { Participant, participantSchema } from "./participant.schema";
 import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
 import { ParticipantRepository } from "./participant.repository";
+import { randomUUID } from "crypto";
 
 class CreateParticipantService {
 
@@ -25,7 +26,8 @@ async getParticipantById(id: string): Promise<Result<Participant>> {
 
 async createParticipant(data: any): Promise<Result<Participant>> {
    try {
-      const parsedParticipantData = participantSchema.parse(data);
+      const id = data.id ? data.id : randomUUID()
+      const parsedParticipantData = participantSchema.parse({...data, id});
       return await ParticipantRepository.createParticipant(parsedParticipantData);
    } catch (error) {
       if (error instanceof z.ZodError) {

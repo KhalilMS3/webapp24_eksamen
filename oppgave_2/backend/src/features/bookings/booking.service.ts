@@ -3,6 +3,7 @@ import { Booking, bookingSchema } from "./booking.schema";
 import { BookingRepository } from "./booking.repository";
 import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
+import { randomUUID } from "crypto";
 
 class CreateBookingService {
 
@@ -25,7 +26,8 @@ async getBookingById(id: string): Promise<Result<Booking>> {
 
 async createBooking(data: any): Promise<Result<Booking>> {
    try {
-   const parsedBookingData = bookingSchema.parse(data);
+      const id = data.id ? data.id : randomUUID()
+   const parsedBookingData = bookingSchema.parse({...data, id});
    return await BookingRepository.createBooking(parsedBookingData);
    } catch (error) {
    if (error instanceof z.ZodError) {
