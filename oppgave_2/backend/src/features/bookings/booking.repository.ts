@@ -60,9 +60,9 @@ export const createBookingRepository = (db: any): BookingRepository => {
 
             const stmt = db.prepare(`
                INSERT INTO bookings(
-               id, event_id, customer_name, customer_email, total_price, status, created_at, upadted_at
+               id, event_id, customer_name, customer_email, total_price, status, created_at, updated_at
                )
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+               VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                `)
             
             stmt.run(
