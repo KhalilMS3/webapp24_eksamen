@@ -1,5 +1,6 @@
 import { Result } from "@/types"
 import { Booking, bookingFromDB, bookingToDB } from "./booking.schema"
+import db from "@/db/db"
 
 type BookingRepository = {
    listBookings: () => Promise<Result<Booking[]>>
@@ -132,3 +133,5 @@ export const createBookingRepository = (db: any): BookingRepository => {
       }
    }
 }
+
+export const BookingRepository = createBookingRepository(db)
