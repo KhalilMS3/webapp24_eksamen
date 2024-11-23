@@ -1,5 +1,6 @@
 import { Result } from "@/types";
 import { Participant, participantFromDB, participantToDB } from "./participant.schema";
+import db from "@/db/db";
 
 type ParticipantRepository = {
   listParticipants: () => Promise<Result<Participant[]>>;
@@ -124,3 +125,5 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
     },
   };
 };
+
+export const ParticipantRepository = createParticipantRepository(db)
