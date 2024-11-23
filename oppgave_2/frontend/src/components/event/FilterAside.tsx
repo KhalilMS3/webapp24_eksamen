@@ -2,14 +2,14 @@ import { generateYears, months } from '@/data/data'
 import React from 'react'
 
 type FilterAsideProps = {
-  month: string | null,
-  year: string | null,
-  type: string | null,
-  status: string | null,
-  setMonth: (value: string | null) => void
-  setYear: (value: string | null) => void
-  setType: (value: string | null) => void
-  setStatus: (value: string | null) => void
+  month: string,
+  year: string,
+  type: string,
+  status: string,
+  setMonth: (value: string) => void
+  setYear: (value: string) => void
+  setType: (value: string) => void
+  setStatus: (value: string) => void
 }
 export default function FilterAside(props: FilterAsideProps) {
   const {
@@ -18,10 +18,10 @@ export default function FilterAside(props: FilterAsideProps) {
   } = props
 
   const handleReset = () => {
-    setMonth(null)
-    setYear(null)
-    setType(null)
-    setStatus(null)
+    setMonth("")
+    setYear("")
+    setType("")
+    setStatus("")
   }
   // Auto generate of years, 3 years before and after current year
   const years = generateYears(-3, 3);
@@ -35,7 +35,7 @@ export default function FilterAside(props: FilterAsideProps) {
           id="year-filter"
           value={year || ""}
           className="border rounded p-3"
-          onChange={(e) => setYear(e.target.value || null)}
+          onChange={(e) => setYear(e.target.value || "")}
         >
           <option value="">Alle</option>
           {years.map((year) => (
@@ -50,7 +50,7 @@ export default function FilterAside(props: FilterAsideProps) {
           id="month-filter"
           value={month || ""}
           className="border rounded p-3"
-          onChange={(e) => setMonth(e.target.value || null)}
+          onChange={(e) => setMonth(e.target.value || "")}
         >
           <option value="">Alle</option>
           {months.map((month) => (
@@ -62,7 +62,7 @@ export default function FilterAside(props: FilterAsideProps) {
         <label htmlFor="type">Type</label>
         <select
           id="type"
-          onChange={(e) => setType(e.target.value || null)}
+          onChange={(e) => setType(e.target.value || "")}
           value={type || ""}
           className="p-2 border rounded"
         >
@@ -78,7 +78,7 @@ export default function FilterAside(props: FilterAsideProps) {
           name="status"
           id="status"
           value={status || ""}
-          onChange={(e) => setStatus(e.target.value || null)}
+          onChange={(e) => setStatus(e.target.value || "")}
           className="p-2 border rounded"
         >
           <option value="">Alle</option>
