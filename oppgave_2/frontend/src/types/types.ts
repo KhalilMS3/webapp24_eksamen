@@ -13,3 +13,9 @@ export type EventType = {
    availableSpots: number,
    status: string
 }
+
+export type ParticipantType = {
+   id: string,
+   name: string,
+   email: string;
+}

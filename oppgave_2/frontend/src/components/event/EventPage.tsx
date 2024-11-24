@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import React from 'react'
 import Header from '../layout/Header'
 import { useEventDetails } from '@/hooks/useEventDetails';
+import BookingForm from './BookingForm';
 
 export default function EventPage() {
   const params = useParams() as Record<string, string>
@@ -91,7 +92,8 @@ export default function EventPage() {
           </section>
         </aside>
       </section>
-      )}
+        )}
+      <BookingForm eventId={event?.id} eventPrice={event?.price}/>
     </>
   );
 }

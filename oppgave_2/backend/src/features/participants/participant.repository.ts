@@ -54,7 +54,7 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
     createParticipant: async (data: Participant): Promise<Result<Participant>> => {
       try {
         const participantData = participantToDB(data);
-
+        console.log("Data to be saved i database:", participantData)
         const stmt = db.prepare(`
           INSERT INTO participants (
             id, booking_id, name, email, waitlist_status, created_at

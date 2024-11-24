@@ -4,6 +4,7 @@ import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
 import { ParticipantRepository } from "./participant.repository";
 import { randomUUID } from "crypto";
+import {v4 as uuid} from "uuid"
 
 class CreateParticipantService {
 
@@ -26,16 +27,18 @@ async getParticipantById(id: string): Promise<Result<Participant>> {
 
 async createParticipant(data: any): Promise<Result<Participant>> {
    try {
-      const id = data.id ? data.id : randomUUID()
-      const parsedParticipantData = participantSchema.parse({...data, id});
+      const id = data.id ? data.id : uuid()
+      const parsedParticipantData = participantSchema.parse({ ...data, id });
+      console.log("Validated participant data:", parsedParticipantData)
       return await ParticipantRepository.createParticipant(parsedParticipantData);
    } catch (error) {
       if (error instanceof z.ZodError) {
+         console.log("validation failed:", error.errors)
       return {
          success: false,
          error: {
             code: STATUS_CODES.BAD_REQUEST,
-            message: JSON.stringify(error.errors),
+            message: JSON.stringify(error.message),
          },
       };
       } else {
