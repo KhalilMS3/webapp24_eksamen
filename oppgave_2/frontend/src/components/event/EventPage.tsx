@@ -56,11 +56,11 @@ export default function EventPage() {
             </p>
             <p>
               <b>Venteliste? </b>
-              {event?.waitlistAvailable ? "Ja" : "Nei"}
+              {event?.waitlist_available ? "Ja" : "Nei"}
             </p>
             <p >
               <b>Privat? </b>
-              {event?.isPrivate ? "Ja - trenger invitasjonslenke" : "Nei"}
+              {event?.is_private ? "Ja - trenger invitasjonslenke" : "Nei"}
             </p>
           </section>
         </section>
@@ -84,7 +84,7 @@ export default function EventPage() {
           </section>
           <section className="flex gap-5">
             <p className="text-lg">
-              🪑<b>Ledige plasser: </b> {event?.availableSpots}
+              🪑<b>Ledige plasser: </b> {event?.available_spots}
             </p>
             <p className="text-lg">
               🧍🏻<b>Kapasitet: </b> {event?.capacity}
@@ -93,7 +93,13 @@ export default function EventPage() {
         </aside>
       </section>
         )}
-      <BookingForm eventId={event?.id} eventPrice={event?.price}/>
+      <BookingForm
+        eventId={event?.id}
+        eventPrice={event?.price}
+        available_spots={event?.available_spots}
+        waitlist_available={event?.waitlist_available}
+        is_private={event?.is_private}
+      />
     </>
   );
 }

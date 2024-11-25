@@ -6,10 +6,13 @@ import React, { useState, useEffect } from "react";
 type BookingFormProps = {
   eventId?: string;
   eventPrice?: number;
+  available_spots?: number;
+   waitlist_available?: boolean;
+   is_private: boolean | undefined;
 };
 
 export default function BookingForm(props: BookingFormProps) {
-  const { eventId, eventPrice } = props;
+  const { eventId, eventPrice, available_spots, waitlist_available, is_private } = props;
 
   const [customerName, setCustomerName] = useState<string>("");
   const [customerEmail, setCustomerEmail] = useState<string>("");
@@ -53,6 +56,17 @@ export default function BookingForm(props: BookingFormProps) {
     e.preventDefault();
     setError(null);
 
+    if (available_spots === 0 && !waitlist_available ) {
+      setError(
+        "Dette arrangementet er fullbooket, og det er ikke mulig å bli satt på venteliste 🙁"
+      );
+      return;
+     }else if (is_private) {
+        setError(
+          "Dette arrangementet er privat, for å kunne delta kontakt admin!"
+        );
+        return;
+      }
     if (!customerName) {
       setError("Vennligst fyll inn navn for bestilleren");
       return;
@@ -94,13 +108,13 @@ export default function BookingForm(props: BookingFormProps) {
         throw new Error("Booking ID mangler etter opprettelse av booking.");
       }
 
-      // Legg til bestilleren som en deltaker etter at booking er fullført
+      // Add
       const mainParticipant = {
         id: uuidv4(),
         booking_id: bookingId,
         name: customerName,
         email: customerEmail,
-        waitlist_status: true,
+        waitlist_status: available_spots === 0, //<- participant sets to waitlist if event is fullbooked
       };
 
       const mainParticipantResponse = await fetch(`${API_BASE}/participants`, {
@@ -122,7 +136,7 @@ export default function BookingForm(props: BookingFormProps) {
           booking_id: bookingId,
           name: participant.name,
           email: participant.email,
-          waitlist_status: true,
+          waitlist_status: available_spots === 0,
         };
 
         const participantResponse = await fetch(`${API_BASE}/participants`, {

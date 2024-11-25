@@ -8,9 +8,9 @@ export type EventType = {
    type: string,
    capacity: number,
    price: number,
-   isPrivate: boolean,
-   waitlistAvailable: boolean,
-   availableSpots: number,
+   is_private: boolean,
+   waitlist_available: boolean,
+   available_spots: number,
    status: string
 }
 
