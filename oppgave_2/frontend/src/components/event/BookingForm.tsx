@@ -2,17 +2,26 @@ import { API_BASE } from "@/config/urls";
 import { ParticipantType } from "@/types/types";
 import { v4 as uuidv4 } from "uuid";
 import React, { useState, useEffect } from "react";
+import { useEventDetails } from "@/hooks/useEventDetails";
 
 type BookingFormProps = {
   eventId?: string;
+  eventSlug?: string | undefined;
   eventPrice?: number;
   available_spots?: number;
-   waitlist_available?: boolean;
-   is_private: boolean | undefined;
+  waitlist_available?: boolean;
+  is_private: boolean | undefined;
 };
 
 export default function BookingForm(props: BookingFormProps) {
-  const { eventId, eventPrice, available_spots, waitlist_available, is_private } = props;
+  const {
+    eventId,
+    eventSlug,
+    eventPrice,
+    available_spots,
+    waitlist_available,
+    is_private,
+  } = props;
 
   const [customerName, setCustomerName] = useState<string>("");
   const [customerEmail, setCustomerEmail] = useState<string>("");
@@ -20,7 +29,7 @@ export default function BookingForm(props: BookingFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(eventPrice ?? 0);
-
+  const { event } = useEventDetails(eventSlug);
   useEffect(() => {
     setTotalPrice(eventPrice ?? 0);
   }, [eventPrice]);
@@ -56,17 +65,17 @@ export default function BookingForm(props: BookingFormProps) {
     e.preventDefault();
     setError(null);
 
-    if (available_spots === 0 && !waitlist_available ) {
+    if (available_spots === 0 && !waitlist_available) {
       setError(
         "Dette arrangementet er fullbooket, og det er ikke mulig å bli satt på venteliste 🙁"
       );
       return;
-     }else if (is_private) {
-        setError(
-          "Dette arrangementet er privat, for å kunne delta kontakt admin!"
-        );
-        return;
-      }
+    } else if (is_private) {
+      setError(
+        "Dette arrangementet er privat, for å kunne delta kontakt admin!"
+      );
+      return;
+    }
     if (!customerName) {
       setError("Vennligst fyll inn navn for bestilleren");
       return;
@@ -150,6 +159,24 @@ export default function BookingForm(props: BookingFormProps) {
         if (!participantResponse.ok) {
           throw new Error("Kunne ikke legge til en deltaker!");
         }
+      }
+
+      const updatedAvailableSpots =
+        available_spots! - (participants.length + 1);
+      const updatedEventData = {
+        ...event,
+        available_spots: updatedAvailableSpots,
+      };
+      const updateSpotsResponse = await fetch(`${API_BASE}/events/${eventId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEventData),
+      });
+
+      if (!updateSpotsResponse.ok) {
+        throw new Error("Kunne ikke oppdatere antall ledige plasser");
       }
 
       setSuccess("Bestilling sendt!");

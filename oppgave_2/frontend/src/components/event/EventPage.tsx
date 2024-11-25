@@ -95,6 +95,7 @@ export default function EventPage() {
         )}
       <BookingForm
         eventId={event?.id}
+        eventSlug={eventSlug}
         eventPrice={event?.price}
         available_spots={event?.available_spots}
         waitlist_available={event?.waitlist_available}

@@ -3,7 +3,7 @@ import { EventType } from "@/types/types"
 import { useEffect, useState } from "react"
 
 
-export const useEventDetails = (eventSlug: string) => {
+export const useEventDetails = (eventSlug: string | undefined) => {
    const [event, setEvent] = useState<EventType | null>(null)
    const [loading, setLoading] = useState<boolean>(false)
    const [error, setError] = useState<string | null>(null)
