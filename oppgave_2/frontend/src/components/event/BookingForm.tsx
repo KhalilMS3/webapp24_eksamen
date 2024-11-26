@@ -183,6 +183,11 @@ export default function BookingForm(props: BookingFormProps) {
       available_spots === 0 && waitlist_available
         ? setSuccess("Bestilling sendt, og du/dere har blitt satt i venteliste 🎉")
         : setSuccess("Bestilling sendt 🎉");
+      
+      setCustomerName("")
+      setCustomerEmail("")
+      setParticipants([])
+      setTotalPrice(eventPrice ?? 0)
         
     } catch (error: any) {
       setError(error.message || "Noe gikk galt under innsendingen.");
