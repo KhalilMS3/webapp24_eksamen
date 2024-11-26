@@ -76,20 +76,18 @@ export default function BookingForm(props: BookingFormProps) {
       );
       return;
     }
-    if (!customerName) {
-      setError("Vennligst fyll inn navn for bestilleren");
-      return;
-    }
-    if (!customerEmail) {
-      setError("Vennligst fyll inn e-post for bestilleren");
-      return;
-    }
+      if (!customerName || !customerEmail) {
+        setError("Vennligst fyll inn navn og e-post for bestilleren");
+        return;
+      }
+    
 
     try {
       // Genererer booking ID på forhånd slik at vi kan bruke den senere
+      // Generating a booking ID in advance to use it later  
       const bookingId = uuidv4();
 
-      // Sender booking-forespørsel
+      // creating a Booking
       const response = await fetch(`${API_BASE}/bookings`, {
         method: "POST",
         headers: {
@@ -108,16 +106,13 @@ export default function BookingForm(props: BookingFormProps) {
         throw new Error("Kunne ikke sende booking!");
       }
 
-      // Venter på at booking-forespørselen skal fullføres
-      const booking = await response.json();
-
       console.log("Booking ID etter opprettelse:", bookingId);
 
       if (!bookingId) {
         throw new Error("Booking ID mangler etter opprettelse av booking.");
       }
 
-      // Add
+      // Add the main participant to participant table
       const mainParticipant = {
         id: uuidv4(),
         booking_id: bookingId,
@@ -138,7 +133,7 @@ export default function BookingForm(props: BookingFormProps) {
         throw new Error("Kunne ikke legge til hoveddeltakeren!");
       }
 
-      // Legg til de andre deltakerne etter at hoveddeltakeren er lagt til
+      // Adds the rest of the participant after the main is added
       for (const participant of participants) {
         const participantData = {
           id: uuidv4(),
@@ -161,11 +156,17 @@ export default function BookingForm(props: BookingFormProps) {
         }
       }
 
-      const updatedAvailableSpots =
-        available_spots! - (participants.length + 1);
+      let updatedAvailableSpots = available_spots! - (participants.length + 1);
+
+      // Ensure that available spots doesn't go below 0
+      if (updatedAvailableSpots < 0) {
+        updatedAvailableSpots = 0
+      }
+      
       const updatedEventData = {
         ...event,
         available_spots: updatedAvailableSpots,
+        status: updatedAvailableSpots === 0 ? "Fullbooket" : "Ledig"
       };
       const updateSpotsResponse = await fetch(`${API_BASE}/events/${eventId}`, {
         method: "PATCH",
@@ -179,7 +180,10 @@ export default function BookingForm(props: BookingFormProps) {
         throw new Error("Kunne ikke oppdatere antall ledige plasser");
       }
 
-      setSuccess("Bestilling sendt!");
+      available_spots === 0 && waitlist_available
+        ? setSuccess("Bestilling sendt, og du/dere har blitt satt i venteliste 🎉")
+        : setSuccess("Bestilling sendt 🎉");
+        
     } catch (error: any) {
       setError(error.message || "Noe gikk galt under innsendingen.");
     }
@@ -256,7 +260,7 @@ export default function BookingForm(props: BookingFormProps) {
         <h3 className="text-xl font-semibold">Total pris: {totalPrice},- kr</h3>
       </section>
       {success && (
-        <p className="text-green-400 text-semibold mb-4">{success}</p>
+        <p className="text-green-600 text-bold mb-4">{success}</p>
       )}
 
       <button
