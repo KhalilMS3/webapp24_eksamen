@@ -1,12 +1,16 @@
 import { Hono } from "hono";
 import { EventService } from "./event.service";
 import { z } from "zod";
-import { error } from "console";
 
 const EventController = new Hono()
 
 EventController.get('/', async (c) => {
-   const result = await EventService.listEvents()
+   
+   const type = c.req.query("type")
+   const year = c.req.query("year")
+   const month = c.req.query("month")
+   const status = c.req.query("status")
+   const result = await EventService.listEvents({type, year, month, status})
 
    if (!result.success) {
       return c.json({success: false, error: result.error.message}, 500)

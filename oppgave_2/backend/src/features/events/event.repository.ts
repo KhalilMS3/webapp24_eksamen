@@ -4,7 +4,7 @@ import db from "@/db/db";
 
 
 type EventRepository = {
-   listEvents: () => Promise<Result<Event[]>> 
+   listEvents: (filters: any) => Promise<Result<Event[]>> 
    getEventBySlug: (slug: string) => Promise<Result<Event>>;
    createEvent: (data: Event) => Promise<Result<Event>>;
    updateEvent: (id: string, data: Event) => Promise<Result<Event>>;
@@ -13,12 +13,30 @@ type EventRepository = {
 
 export const createEventRepository = (db: any): EventRepository => {
    return {
-      listEvents: async (): Promise<Result<Event[]>> => {
+      listEvents: async (filters): Promise<Result<Event[]>> => {
          try {
-            const stmt = db.prepare(`
-               SELECT * FROM events
-               `)
-            const rows = stmt.all()
+            let query = `SELECT * FROM events WHERE 1=1` // 1=1 to easily add several AND terms without any specific conditions 
+            const params: any[] = []
+            
+            if (filters.type) {
+               query += ` AND type = ?`
+               params.push(filters.type)
+            }
+            if (filters.year) {
+               query += ` AND strftime('%Y', date) = ?`
+               params.push(filters.year)
+            }
+            if (filters.month) {
+               query += ` AND strftime('%m', date) = ?`
+               params.push(filters.month.padStart(2, '0'))
+            }
+            if (filters.status) {
+               query += ` AND status = ?`
+               params.push(filters.status)
+            }
+            
+            const stmt = db.prepare(query)
+            const rows = stmt.all(...params)
             const events = rows.map(eventFromDB)
 
             return {success: true, data: events}

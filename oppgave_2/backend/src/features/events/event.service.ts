@@ -7,8 +7,8 @@ import { randomUUID } from "crypto";
 
 
 class createEventService {
-   async listEvents(): Promise<Result<Event[]>>{
-      return await EventRepository.listEvents()
+   async listEvents(filters: {type?: string, year?: string, month?: string, status?: string}): Promise<Result<Event[]>>{
+      return await EventRepository.listEvents(filters)
    }
    async getEventBySlug(slug: string): Promise<Result<Event>>{
       if (!slug) {
