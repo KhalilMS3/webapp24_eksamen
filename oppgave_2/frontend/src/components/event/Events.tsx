@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import EventCard from "./EventCard";
 import { format } from "date-fns";
 import FilterAside from "./FilterAside";
@@ -13,15 +13,10 @@ export default function Events() {
   const [year, setYear] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const { events, loading, error } = useEvent();
-  const { filteredEvents } = useEventFilter({
-    events,
-    month,
-    year,
-    type,
-    status,
-    loading
-  });
+  const filterCriteria = useMemo(() => {
+    return {type, year, month, status}
+  }, [type, year, month, status])
+  const { events, loading, error } = useEvent(filterCriteria);
 
   return (
     <>
@@ -48,9 +43,9 @@ export default function Events() {
           {
             error ? (
             <p>En feil oppsted ved opplasting av arrangenemter: {error}</p>
-          ) : filteredEvents.length > 0 ? (
+          ) : events.length > 0 ? (
             <section className="flex flex-wrap justify-items-stretch gap-3">
-              {filteredEvents?.map((event) => {
+              {events?.map((event) => {
                 const date = format(new Date(event.date), "dd/MM/yyyy");
                 return (
                   <EventCard
@@ -66,11 +61,11 @@ export default function Events() {
                 );
               })}
             </section>
-          ) : events.length > 0 ? (
+          ) : events.length === 0 ? (
             <p>Ingen resultater for valgte filtrene 🫤</p>
-          ) : (
+          ) : loading ? (
             <p>Laster inn arrangenemter...</p>
-          )}
+          ): null}
         </section>
       </section>
     </>
