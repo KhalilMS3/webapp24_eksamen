@@ -3,6 +3,37 @@ import { type DB } from "./db"
 export const createTables = (db: DB) => {
    try {
       db.exec(`
+         CREATE TABLE templates(
+         id TEXT PRIMARY KEY,
+         title TEXT NOT NULL,
+         description TEXT,
+         date_locked TEXT,
+         no_overlapping_events INTEGER DEFAULT 0,
+         is_private INTEGER DEFAULT 0,
+         capacity INTEGER,
+         price REAL DEFAULT 0,
+         has_waitlist INTEGER DEFAULT 0,
+         created_at TEXT NOT NULL,
+         updated_at TEXT
+      )
+         `)
+      console.log("Tables created successfully!")
+   } catch (error) {
+      console.error("Error creating tables:", error)
+   }
+}
+
+export const dropTables = (db: DB) => {
+   
+}
+
+export const deleteDatabaseContent = (db: DB) => {
+   
+}
+
+/*
+? Creation of other tables:
+
          CREATE TABLE IF NOT EXISTS events (
             id TEXT PRIMARY KEY NOT NULL,
             title TEXT NOT NULL,
@@ -42,18 +73,4 @@ export const createTables = (db: DB) => {
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (booking_id) REFERENCES bookings(id)
          );
-
-         `)
-      console.log("Tables created successfully!")
-   } catch (error) {
-      console.error("Error creating tables:", error)
-   }
-}
-
-export const dropTables = (db: DB) => {
-   
-}
-
-export const deleteDatabaseContent = (db: DB) => {
-   
-}
+*/
