@@ -4,7 +4,7 @@ export const templateSchema = z.object({
    id: z.string().uuid(),
    title: z.string(),
    description: z.string().optional(),
-   date_locked: z.string().optional(), // Will be a json formatted array of days locked
+   date_locked: z.array(z.string()).optional(), // Will be a json formatted array of days locked
    no_overlapping_events: z.boolean().default(false),
    is_private: z.boolean().default(false),
    capacity: z.number().optional(),
@@ -15,6 +15,7 @@ export const templateSchema = z.object({
 }) 
 
 export const templateSchemaDB = templateSchema.extend({
+   date_locked: z.string().optional(),
    no_overlapping_events: z.number(),
    is_private: z.number(),
    has_waitlist: z.number(),
@@ -26,6 +27,7 @@ export type TemplateDB = z.infer<typeof templateSchemaDB>
 export const templateFromDB = (template: z.infer<typeof templateSchemaDB>): z.infer<typeof templateSchema> => {
    return {
       ...template,
+      date_locked: template.date_locked ? JSON.parse(template.date_locked) : [],
       no_overlapping_events: template.no_overlapping_events === 1 ? true : false,
       is_private: template.is_private === 1 ? true : false,
       has_waitlist: template.has_waitlist === 1 ? true : false
@@ -34,6 +36,7 @@ export const templateFromDB = (template: z.infer<typeof templateSchemaDB>): z.in
 export const templateToDB = (template: z.infer<typeof templateSchema>): z.infer<typeof templateSchemaDB> => {
    return {
       ...template,
+      date_locked: template.date_locked ? JSON.stringify(template.date_locked) : undefined,
       no_overlapping_events: template.no_overlapping_events ? 1 : 0,
       is_private: template.is_private ? 1 : 0,
       has_waitlist: template.has_waitlist ? 1 : 0

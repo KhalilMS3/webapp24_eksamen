@@ -92,7 +92,15 @@ export const months = [
   { value: '11', label: 'November' },
   { value: '12', label: 'Desember' }, 
 ]
-
+export const weekDays = [
+        "Mandag",
+        "Tirsdag",
+        "Onsdag",
+        "Torsdag",
+        "Fredag",
+        "Lørdag",
+        "Søndag",
+      ]
 export const generateYears = (startOffset: number, endOffset: number) => {
   const currentYear = new Date().getFullYear()
   const years: number[] = []

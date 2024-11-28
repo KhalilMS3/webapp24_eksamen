@@ -4,7 +4,6 @@ import EventCard from "./EventCard";
 import { format } from "date-fns";
 import FilterAside from "./FilterAside";
 import Header from "../layout/Header";
-import useEventFilter from "@/hooks/useEventFilter";
 import { useEvent } from "@/hooks/useEvent";
 
 

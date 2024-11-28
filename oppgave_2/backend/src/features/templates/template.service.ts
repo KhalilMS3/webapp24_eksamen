@@ -26,6 +26,7 @@ class createTemplateService {
             data.id = randomUUID()
          }
          const parsedTemplateData = templateSchema.parse(data)
+         console.log("Parsed template data: ", parsedTemplateData)
          return await TemplateRepository.createTemplate(parsedTemplateData)
       } catch (error) {
          if (error instanceof z.ZodError) {

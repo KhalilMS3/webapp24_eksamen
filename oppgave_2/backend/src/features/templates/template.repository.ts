@@ -1,6 +1,7 @@
 import { Result } from "@/types"
 import { Template, templateFromDB, templateToDB } from "./template.schema"
 import db from "@/db/db"
+import { randomUUID } from "crypto"
 
 type TemplateRepository = {
    listTemplates: () => Promise<Result<Template[]>>
@@ -53,6 +54,9 @@ export const createTemplateRepository = (db: any): TemplateRepository => {
       createTemplate: async (data: Template): Promise<Result<Template>> => {
          try {
             const templateData = templateToDB(data)
+            if (!data.created_at) {
+               data.created_at = new Date().toISOString()
+            }
             const stmt = db.prepare(`
                INSERT INTO templates (
                         id, title, description, date_locked, no_overlapping_events,
@@ -69,7 +73,7 @@ export const createTemplateRepository = (db: any): TemplateRepository => {
                templateData.capacity,
                templateData.price,
                templateData.has_waitlist,
-               templateData.created_at,
+               templateData.created_at
             )
             return {success: true, data}
          } catch (error: any) {
