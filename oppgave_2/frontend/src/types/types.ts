@@ -19,3 +19,17 @@ export type ParticipantType = {
    name: string,
    email: string;
 }
+
+export type Template = {
+   id: string;
+   title: string;
+   description?: string;
+   date_locked?: string[]; 
+   no_overlapping_events: boolean;
+   is_private: boolean;
+   capacity?: number;
+   price: number;
+   has_waitlist: boolean;
+   created_at: string;
+   updated_at?: string;
+};
