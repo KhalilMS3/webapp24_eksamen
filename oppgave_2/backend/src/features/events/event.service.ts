@@ -4,6 +4,7 @@ import { EventRepository } from "./event.repository";
 import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
 import { randomUUID } from "crypto";
+import { slugify } from "@/utils/slugify";
 
 
 class createEventService {
@@ -27,7 +28,11 @@ class createEventService {
          if (!data.id) {
             data.id = randomUUID()
          }
+         if (!data.slug) {
+            data.slug = slugify(data.title)
+         }
          const parsedEventData = eventSchema.parse(data)
+         console.log("Parsed event data: ", parsedEventData)
          return await EventRepository.createEvent(parsedEventData)
       } catch (error) {
          if (error instanceof z.ZodError) {
