@@ -5,6 +5,8 @@ import { z } from "zod";
 import { STATUS_CODES } from "@/lib/error";
 import { randomUUID } from "crypto";
 import { slugify } from "@/utils/slugify";
+import { TemplateRepository } from "../templates/template.repository";
+import { error } from "console";
 
 
 class createEventService {
@@ -23,7 +25,7 @@ class createEventService {
       }
       return await EventRepository.getEventBySlug(slug)
    }
-   async createEvent(data: any): Promise<Result<Event>>{
+   async createEvent(data: any, templateId?: string): Promise<Result<Event>>{
       try {
          if (!data.id) {
             data.id = randomUUID()
@@ -31,9 +33,64 @@ class createEventService {
          if (!data.slug) {
             data.slug = slugify(data.title)
          }
-         const parsedEventData = eventSchema.parse(data)
-         console.log("Parsed event data: ", parsedEventData)
-         return await EventRepository.createEvent(parsedEventData)
+
+         // if event is created using template, we get the template to validate rules
+         if (templateId) {
+            const templateResult = await TemplateRepository.getTemplateById(templateId)
+            if (!templateResult.success) {
+               return {
+                  success: false,
+                  error: {
+                     code: "404",
+                     message: `Template with id ${templateId} not found!`
+                  }
+               }
+            }
+            const template = templateResult.data
+            console.log(template)
+            // Rule nr 1, No overlapping events on the same day
+            // Rule nr 1, scenario #1: If event is created using a template
+            if (template?.no_overlapping_events) {
+               const existingEvents = await EventRepository.listEvents({})
+               if (existingEvents.success) {
+                  const isDateOverlapping = existingEvents.data.some(
+                     (event) => 
+                     new Date(event.date).toDateString() === new Date(data.date).toDateString()
+                  )
+                  if (isDateOverlapping) {
+                  return {
+                     success: false,
+                     error: {
+                     code: STATUS_CODES.CONFLICT, // Conflict 
+                     message: `An event already exist on chosen date!`,
+               }
+            }
+         }
+               }
+               
+      }  
+         }  
+         // Rule nr 1, scenario #2: If event is created from scratch
+         const allExistingEvents = await EventRepository.listEvents({})
+         if (allExistingEvents.success) {
+                  const isDateOverlapping = allExistingEvents.data.some(
+                     (event) => 
+                     new Date(event.date).toDateString() === new Date(data.date).toDateString()
+                  )
+                  if (isDateOverlapping) {
+                     return {
+                  success: false,
+                  error: {
+                     code: STATUS_CODES.CONFLICT, // Conflict 
+                     message: `An event already exist on chosen date!`,
+                  }
+               }
+            }
+               }
+         
+      const parsedEventData = eventSchema.parse(data)
+      console.log("Parsed event data: ", parsedEventData)
+      return await EventRepository.createEvent(parsedEventData)
       } catch (error) {
          if (error instanceof z.ZodError) {
             return {

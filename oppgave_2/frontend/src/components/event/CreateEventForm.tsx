@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { API_BASE } from "@/config/urls";
+import { checkDateAvailability } from "@/lib/services/eventService";
 
 type CreateEventFormProps = {
   template?: {
@@ -11,6 +12,7 @@ type CreateEventFormProps = {
     is_private: boolean;
     type: string;
     location: string;
+    no_overlapping_events?: boolean;
   };
 };
 
@@ -27,18 +29,40 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
   const [status, setStatus] = useState<string>("Ledig");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (template) {
-      setTitle(template.title || "");
+      setTitle("");
       setDescription(template.description || "");
       setLocation(template.location || "");
       setEventType(template.type || "");
       setCapacity(template.capacity || "");
       setPrice(template.price || "");
-       setIsPrivate(template.is_private || false);
+      setIsPrivate(template.is_private || false);
     }
-  }, [template]);
+  }, [template])
+
+  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = e.target.value;
+    setDate(selectedDate);
+    setError(null); // Reset Error on date change
+
+    if (template?.no_overlapping_events) {
+      try {
+        const isDateAvailable = await checkDateAvailability(selectedDate);
+        if (!isDateAvailable) {
+          setError(
+            "Et arrangement eksisterer allerede på denne datoen, prøv en annen dato!"
+           );
+        }
+      } catch (error: any) {
+        console.error("Noe gikk galt ved sjekk av dato tilgjengelighet:", error);
+        setError("Noe gikk galt ved sjekking av dato tilgjengelighet");
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -61,6 +85,23 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
       return;
     }
 
+    if (template?.no_overlapping_events) {
+      try {
+        const isDateAvailable = await checkDateAvailability(date);
+        if (!isDateAvailable) {
+          setError(
+            "Et arrangement eksisterer allerede på denne datoen, prøv en annen dato!"
+           );
+           setLoading(false)
+          return;
+        }
+      } catch (error: any) {
+         setError("Noe gikk galt ved sjekking av dato tilgjengelighet");
+         setLoading(false)
+        return;
+      }
+    }
+
     const formData = {
       id: crypto.randomUUID(),
       title,
@@ -78,6 +119,7 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
     };
 
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE}/events`, {
         method: "POST",
         headers: {
@@ -86,33 +128,48 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        setError("Feil ved opprettelse av arrangement!");
+      const responseData = await response.json();
+       console.log("Response data: ", responseData)
+       
+      if (!response.ok || !responseData.success) {
+         let errorMessage = "Feil ved opprettelse av arrangement";
+         
+            responseData.error?.message ?
+               errorMessage = responseData.error.message
+               :errorMessage = responseData.error
+      
+        setError(errorMessage);
         return;
       }
 
-      setSuccess("Arrangement opprettet 🎉");
+      if (responseData.success) {
+        setSuccess("Arrangement opprettet 🎉");
 
-      // Resett feltene etter vellykket opprettelse
-      setTitle("");
-      setDescription("");
-      setDate("");
-      setLocation("");
-      setEventType("");
-      setCapacity("");
-      setPrice("");
-      setIsPrivate(false);
-      setWaitlistAvailable(false);
-      setStatus("Ledig");
+      // Reset field on success
+        setTitle("");
+        setDescription("");
+        setDate("");
+        setLocation("");
+        setEventType("");
+        setCapacity("");
+        setPrice("");
+        setIsPrivate(false);
+        setWaitlistAvailable(false);
+        setStatus("Ledig");
+      }
     } catch (error: any) {
-      setError(error.message);
+      setError(`En feil oppstod: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-6 bg-white rounded-md shadow-md">
       <h2 className="text-2xl font-bold mb-4">
-        {template ? `Opprett arrangement fra mal: ${template.title}` : "Opprett nytt arrangement"}
+        {template
+          ? `Opprett arrangement fra mal: ${template.title}`
+          : "Opprett nytt arrangement"}
       </h2>
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
         <section>
@@ -167,7 +224,7 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
             id="date"
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={handleDateChange}
             className="w-full p-2 border rounded"
             required
           />
@@ -234,6 +291,7 @@ export default function CreateEventForm({ template }: CreateEventFormProps) {
 
       <button
         type="submit"
+        disabled={loading}
         className="px-4 py-2 bg-green-600 text-white font-semibold rounded"
       >
         Opprett Arrangement

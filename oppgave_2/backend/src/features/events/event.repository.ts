@@ -4,10 +4,10 @@ import db from "@/db/db";
 
 
 type EventRepository = {
-   listEvents: (filters: any) => Promise<Result<Event[]>> 
-   getEventBySlug: (slug: string) => Promise<Result<Event>>;
-   createEvent: (data: Event) => Promise<Result<Event>>;
-   updateEvent: (id: string, data: Event) => Promise<Result<Event>>;
+   listEvents: (filters: any) => Promise<Result<Event[]>>
+   getEventBySlug: (slug: string) => Promise<Result<Event>>
+   createEvent: (data: Event) => Promise<Result<Event>>
+   updateEvent: (id: string, data: Event) => Promise<Result<Event>>
    deleteEvent: (slug: string) => Promise<Result<null>> 
 }
 
