@@ -1,7 +1,6 @@
 import { Result } from "@/types"
 import { Template, templateFromDB, templateToDB } from "./template.schema"
 import db from "@/db/db"
-import { randomUUID } from "crypto"
 
 type TemplateRepository = {
    listTemplates: () => Promise<Result<Template[]>>

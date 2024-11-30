@@ -12,8 +12,9 @@ template?: {
    is_private: boolean;
    type: string;
    location: string;
+   waitlist_available: boolean;
    no_overlapping_events?: boolean;
-   date_locked: string[],
+   date_locked: string[];
 };
 };
 
@@ -41,64 +42,65 @@ useEffect(() => {
    setCapacity(template.capacity || "");
    setPrice(template.price || "");
    setIsPrivate(template.is_private || false);
+   setWaitlistAvailable(template.waitlist_available || false);
    }
-}, [template])
-
+}, [template]);
+console.log(template?.waitlist_available)
 const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
    const selectedDate = e.target.value;
    setDate(selectedDate);
    setError(null); // Reset Error on date change
 
    if (template?.no_overlapping_events) {
-      try {
-         const isDateAvailable = await checkDateAvailability(selectedDate);
-         if (!isDateAvailable) {
-            setError(
-               "Et arrangement eksisterer allerede på denne datoen, prøv en annen dato!"
-            );
-         }
-      } catch (error: any) {
-         console.error(
-            "Noe gikk galt ved sjekk av dato tilgjengelighet:",
-            error
+   try {
+      const isDateAvailable = await checkDateAvailability(selectedDate);
+      if (!isDateAvailable) {
+         setError(
+         "Et arrangement eksisterer allerede på denne datoen, prøv en annen dato!"
          );
-         setError("Noe gikk galt ved sjekking av dato tilgjengelighet");
       }
+   } catch (error: any) {
+      console.error(
+         "Noe gikk galt ved sjekk av dato tilgjengelighet:",
+         error
+      );
+      setError("Noe gikk galt ved sjekking av dato tilgjengelighet");
+   }
    }
    try {
-      const eventDate = new Date(selectedDate)
+   const eventDate = new Date(selectedDate);
 
-      if (isNaN(eventDate.getTime())) {
-         setError("Ugyldig datoformat. Vennligst velg en gyldig dato")
-         return
-      }
-      // Rule nr 2, creation of event in certain allowed days
-      if (template?.date_locked) {
-         const eventAllowedDays = template.date_locked.map(day => day.toLowerCase()); // lower casing days to avoid mismatch
-         
-         const eventDay = eventDate
-         .toLocaleString("no-NO", {
-            weekday: "long",
-         });
-         console.log(eventAllowedDays);
-         console.log(eventDay);
-         if (!eventAllowedDays.includes(eventDay)) {
+   if (isNaN(eventDate.getTime())) {
+      setError("Ugyldig datoformat. Vennligst velg en gyldig dato");
+      return;
+   }
+   // Rule nr 2, creation of event in certain allowed days
+   if (template?.date_locked) {
+      const eventAllowedDays = template.date_locked.map((day) =>
+         day.toLowerCase()
+      ); // lower casing days to avoid mismatch
+
+      const eventDay = eventDate.toLocaleString("no-NO", {
+         weekday: "long",
+      });
+      console.log(eventAllowedDays);
+      console.log(eventDay);
+      if (!eventAllowedDays.includes(eventDay)) {
          setError(
-            `Arrangementet blir opprettet via en mal som kun tillatter opprettelser på ${eventAllowedDays.join(
-               ", "
-            )}`
+         `Arrangementet blir opprettet via en mal som kun tillatter opprettelser på ${eventAllowedDays.join(
+            ", "
+         )}`
          );
          return;
-         }
       }
-   } catch (error) {
-      console.error("En feil oppstod ved parsing av dato:", error);
-      setError(
-         "En feil oppstod ved parsing av dato. Vennligst velg en gyldig dato."
-      );
    }
-      }
-
+   } catch (error) {
+   console.error("En feil oppstod ved parsing av dato:", error);
+   setError(
+      "En feil oppstod ved parsing av dato. Vennligst velg en gyldig dato."
+   );
+   }
+};
 
 const handleSubmit = async (e: React.FormEvent) => {
    e.preventDefault();
@@ -142,7 +144,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
    // Rule nr 2, creation of event in certain allowed days
    if (template?.date_locked) {
-   const eventAllowedDays = template.date_locked.map(day => day.toLowerCase());
+   const eventAllowedDays = template.date_locked.map((day) =>
+      day.toLowerCase()
+   );
    const eventDay = new Date(date).toLocaleString("no-NO", {
       weekday: "long",
    });
@@ -204,10 +208,6 @@ const handleSubmit = async (e: React.FormEvent) => {
       setDate("");
       setLocation("");
       setEventType("");
-      setCapacity("");
-      setPrice("");
-      setIsPrivate(false);
-      setWaitlistAvailable(false);
       setStatus("Ledig");
    }
    } catch (error: any) {
@@ -251,6 +251,7 @@ return (
             setCapacity(e.target.value ? Number(e.target.value) : "")
          }
          className="w-full p-2 border rounded"
+         disabled={template?.capacity !== undefined}
          />
       </section>
 
@@ -258,14 +259,19 @@ return (
          <label htmlFor="price" className="block font-semibold mb-2">
          Pris
          </label>
+
+         {Number(template?.price) === 0 ? (
+         <small>Arrangementet er gratis</small>
+         ) : null}
          <input
          id="price"
          type="number"
-         value={price}
+         value={price || 0}
          onChange={(e) =>
-            setPrice(e.target.value ? Number(e.target.value) : "")
+            setPrice(e.target.value ? Number(e.target.value) : 0)
          }
-         className="w-full p-2 border rounded"
+               className="w-full p-2 border rounded"
+         disabled={template?.price !== undefined}
          />
       </section>
 
@@ -294,6 +300,7 @@ return (
          onChange={(e) => setLocation(e.target.value)}
          className="w-full p-2 border rounded"
          required
+         disabled={template?.location !== undefined}
          />
       </section>
 
@@ -308,6 +315,7 @@ return (
          onChange={(e) => setEventType(e.target.value)}
          className="w-full p-2 border rounded"
          required
+         disabled={template?.type !== undefined}
          />
       </section>
    </section>
@@ -325,18 +333,20 @@ return (
    </section>
 
    <section className="flex items-center gap-10 mb-4">
-      <label className="block font-semibold">Privat arrangement</label>
       <input
          type="checkbox"
          checked={isPrivate}
          onChange={(e) => setIsPrivate(e.target.checked)}
+         disabled={template?.is_private !== undefined}
       />
-      <label className="block font-semibold">Venteliste tilgjengelig</label>
+      <label className="block font-semibold">Privat arrangement</label>
       <input
          type="checkbox"
          checked={waitlistAvailable}
          onChange={(e) => setWaitlistAvailable(e.target.checked)}
+         disabled={template?.waitlist_available !== undefined}
       />
+      <label className="block font-semibold">Venteliste tilgjengelig</label>
    </section>
 
    {error && <p className="text-red-500 mb-4">{error}</p>}

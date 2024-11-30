@@ -2,8 +2,6 @@
 import { API_BASE } from '@/config/urls'
 import { useState } from 'react'
 import {v4 as uuidv4} from 'uuid'
-import Header from '../layout/Header'
-import Link from 'next/link'
 import { weekDays } from '@/data/data'
 
 export default function TemplateForm() {
@@ -124,20 +122,17 @@ const handleSubmit = async (e: React.FormEvent) => {
 
          <section className="mb-4">
            <label className="block font-semibold mb-2">Låste dager</label>
-           <small>Dager </small>
+           <small>Dager arrangementet kan opprettes i</small>
            <section className="flex gap-2">
              {weekDays.map((day) => (
-               <section
-                 key={day}
-                 className="flex gap-0 items-baseline mb-2"
-               >
+               <section key={day} className="flex gap-0 items-baseline mb-2">
                  <input
                    type="checkbox"
                    id={`day-${day}`}
                    value={day}
                    checked={dateLocked.includes(day)}
                    onChange={() => handleDaySelect(day)}
-                   className="mr-2"
+                   className="mr-2 mt-2 rounded"
                  />
                  <label htmlFor={`day-${day}`}>{day}</label>
                </section>
@@ -149,24 +144,37 @@ const handleSubmit = async (e: React.FormEvent) => {
            <input
              type="checkbox"
              checked={noOverlappingEvents}
+             className="mt-2 rounded"
              onChange={(e) => setNoOverlappingEvents(e.target.checked)}
            />
            <label className="block font-semibold mb-2">
              Ingen overlappende arrangementer
            </label>
          </section>
-
-         <section className="mb-4">
-           <label className="block font-semibold mb-2">
-             Privat arrangement
-           </label>
-           <input
-             type="checkbox"
-             checked={isPrivate}
-             onChange={(e) => setIsPrivate(e.target.checked)}
-           />
+         <section className="flex gap-5">
+           <section className="mb-4 flex items-baseline gap-2">
+             <input
+               type="checkbox"
+               checked={hasWaitlist}
+               onChange={(e) => setHasWaitlist(e.target.checked)}
+               className="rounded mt-2"
+             />
+             <label className="block font-semibold mb-2">
+               Venteliste tilgjengelig
+             </label>
+           </section>
+           <section className="mb-4 flex items-baseline gap-2">
+             <input
+               type="checkbox"
+               checked={isPrivate}
+               className="mt-2 rounded"
+               onChange={(e) => setIsPrivate(e.target.checked)}
+             />
+             <label className="block font-semibold mb-2">
+               Privat arrangement
+             </label>
+           </section>
          </section>
-
          <section className="mb-4">
            <label htmlFor="capacity" className="block font-semibold mb-2">
              Kapasitet
@@ -186,6 +194,9 @@ const handleSubmit = async (e: React.FormEvent) => {
            <label htmlFor="price" className="block font-semibold mb-2">
              Pris
            </label>
+           <small>
+             Hvis arrangementet er gratis, sett 0 som pris eller hold feltet tom{" "}
+           </small>
            <input
              id="price"
              type="number"
@@ -194,17 +205,6 @@ const handleSubmit = async (e: React.FormEvent) => {
                setPrice(e.target.value ? Number(e.target.value) : "")
              }
              className="w-full p-2 border rounded"
-           />
-         </section>
-
-         <section className="mb-4">
-           <label className="block font-semibold mb-2">
-             venteliste tilgjengelig
-           </label>
-           <input
-             type="checkbox"
-             checked={hasWaitlist}
-             onChange={(e) => setHasWaitlist(e.target.checked)}
            />
          </section>
          {error && <p className="text-red-500 mb-4">{error}</p>}

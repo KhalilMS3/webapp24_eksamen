@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CreateEventForm from "@/components/event/CreateEventForm";
 import { API_BASE } from "@/config/urls";
-import AdminNavBar from "@/components/admin/AdminNavBar";
+
 import Dashboard from "@/components/admin/Dashboard";
 
 export default function Page() {
@@ -36,7 +36,6 @@ export default function Page() {
 
     fetchTemplate();
   }, [id]);
-
   if (loading) {
     return <p>Laster inn mal...</p>;
   }
