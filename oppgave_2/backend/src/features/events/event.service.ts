@@ -129,12 +129,75 @@ class createEventService {
       }
    }
 
-   async updateEvent(id: string, data: any): Promise<Result<Event>>{
+   async updateEvent(id: string, data: any, templateId?: string): Promise<Result<Event>>{
       try {
+         const eventResult = await EventRepository.getEventById(id)
+         if (!eventResult.success) {
+            return {
+               success: false,
+               error: {
+                  code: STATUS_CODES.NOT_FOUND,
+                  message: "Event not found"
+               }
+            }
+         }
+         const existingEvent = eventResult.data
+
+         // Getting the template data if exist to validate rules
+         if (templateId) {
+            const templateResult = await TemplateRepository.getTemplateById(templateId)
+            if (!templateResult.success) {
+            return {
+               success: false,
+               error: {
+                  code: STATUS_CODES.NOT_FOUND,
+                  message: "Template not found"
+               }
+            }
+         }
+            const template = templateResult.data
+            // Rule nr 1, No overlapping events on the same day
+            if (template?.no_overlapping_events) {
+               const existingEvents = await EventRepository.listEvents({})
+               if (existingEvents.success) {
+                  const isDateOverlapping = existingEvents.data.some(
+                     (event) => 
+                        // avoid comparing with same event
+                        event.id !== id &&
+                     new Date(event.date).toDateString() === new Date(data.date).toDateString()
+                  )
+                  if (isDateOverlapping) {
+                  return {
+                     success: false,
+                     error: {
+                     code: STATUS_CODES.CONFLICT, // Conflict 
+                     message: `An event already exist on chosen date!`,
+               }
+            }
+         }
+               }
+               
+            }  
+       // Rule nr 2: If event is created using a template, which is allowed in certain days
+            if (template.date_locked) {
+               const eventAllowedDays = template.date_locked
+               const evenDay = new Date(data.date).toLocaleString("no-NO", { weekday: "long" })
+               if (!eventAllowedDays.includes(evenDay)) {
+                  return {
+                     success: false,
+                     error: {
+                        code: STATUS_CODES.BAD_REQUEST, // Conflict 
+                        message: `Chosen Template allow event creation only on ${eventAllowedDays.join(",")}!`,
+                     }
+                  }
+               }
+            }
+         }  
+
          const parsedEvenData = eventUpdateSchema.parse(data)
          const updatedEventData = {
             ...parsedEvenData,
-            id: id
+            id: existingEvent.id
          }
          return await EventRepository.updateEvent(id, updatedEventData)
       } catch (error) {
@@ -157,17 +220,17 @@ class createEventService {
          }
       }
    }
-   async deleteEvent(slug: string): Promise<Result<null>>{
-      if (!slug) {
+   async deleteEvent(id: string): Promise<Result<null>>{
+      if (!id) {
          return {
             success: false,
             error: {
                code: STATUS_CODES.BAD_REQUEST,
-               message: "Invalid event slug"
+               message: "Invalid event ID"
             }
          }
       }
-      return await EventRepository.deleteEvent(slug)
+      return await EventRepository.deleteEvent(id)
    }
 }
 

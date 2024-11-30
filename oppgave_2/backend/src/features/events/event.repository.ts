@@ -5,10 +5,11 @@ import db from "@/db/db";
 
 type EventRepository = {
    listEvents: (filters: any) => Promise<Result<Event[]>>
+   getEventById: (id: string) => Promise<Result<Event>>
    getEventBySlug: (slug: string) => Promise<Result<Event>>
    createEvent: (data: Event) => Promise<Result<Event>>
    updateEvent: (id: string, data: Event) => Promise<Result<Event>>
-   deleteEvent: (slug: string) => Promise<Result<null>> 
+   deleteEvent: (id: string) => Promise<Result<null>> 
 }
 
 export const createEventRepository = (db: any): EventRepository => {
@@ -67,6 +68,29 @@ export const createEventRepository = (db: any): EventRepository => {
             return{success: true, data: event}
          } catch (error: any) {
             console.error("Error fetching event by slug:", error)
+            return {success: false, error: error.message}
+            
+         }
+      },
+      getEventById: async (id: string): Promise<Result<Event>> => {
+         try {
+            const stmt = db.prepare(`
+               SELECT * FROM events WHERE id = ?
+               `)
+            const row = stmt.get(id)
+            if (!row) {
+               return {
+                  success: false, error: {
+                     code: "404",
+                     message: "Event not found"
+                  }
+               }
+            }
+
+            const event = eventFromDB(row)
+            return{success: true, data: event}
+         } catch (error: any) {
+            console.error("Error fetching event by ID:", error)
             return {success: false, error: error.message}
             
          }
@@ -140,13 +164,13 @@ export const createEventRepository = (db: any): EventRepository => {
          }
       },
 
-      deleteEvent: async (slug: string): Promise<Result<null>> => {
+      deleteEvent: async (id: string): Promise<Result<null>> => {
          try {
             const stmt = db.prepare(`
-               DELETE FROM events WHERE slug = ?
+               DELETE FROM events WHERE id = ?
                `)
             
-            const result = stmt.run(slug)
+            const result = stmt.run(id)
             if (result.changes === 0) {
                return { success: false, error: {
                   code: "404",

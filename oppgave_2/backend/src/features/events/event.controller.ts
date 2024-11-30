@@ -69,10 +69,10 @@ EventController.patch('/:id', async (c) => {
       return c.json({ success: false, error: "Failed to update project" }, 400)
    }
 })
-EventController.delete('/:slug', async (c) => {
+EventController.delete('/:id', async (c) => {
    try {
-      const slug = c.req.param('slug')
-      const response = await EventService.deleteEvent(slug)
+      const id = c.req.param('id')
+      const response = await EventService.deleteEvent(id)
       if (!response.success) {
          return c.json({success: false, error: response.error.message}, 404)
       }

@@ -16,3 +16,12 @@ export const checkDateAvailability = async (date: string): Promise<boolean> => {
       return false // if error is catched, indicate date is not available
    }
 }
+
+export const slugify = (title: string) => {
+    return title
+        .toLowerCase()                 // Gjør om til små bokstaver
+        .replace(/[^a-z0-9 -]/g, '')    // Fjern alle tegn som ikke er alfanumeriske, mellomrom eller bindestreker
+        .replace(/\s+/g, '-')           // Bytt ut mellomrom med bindestreker
+        .replace(/-+/g, '-')            // Fjern flere bindestreker etter hverandre
+        .trim();                        // Trim eventuelle bindestreker i starten eller slutten
+}

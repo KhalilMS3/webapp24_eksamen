@@ -11,7 +11,9 @@ export type EventType = {
    is_private: boolean,
    waitlist_available: boolean,
    available_spots: number,
-   status: string
+   status: string,
+   created_at: string,
+   updated_at: string,
 }
 
 export type ParticipantType = {

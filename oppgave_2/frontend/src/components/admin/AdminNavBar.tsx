@@ -14,6 +14,9 @@ export default function AdminNavBar(props: PropsWithChildren) {
       <Link className="font-semibold" href={"/admin/maler"}>
         Maler
       </Link>
+      <Link className="font-semibold" href={"/admin/arrangementer"}>
+        Arrangementer
+      </Link>
       <Link className="font-semibold" href={"/admin/opprett-arrangement"}>
         Opprett arrangement
       </Link>
