@@ -48,7 +48,7 @@ export default function Page() {
   return (
     
     <Dashboard>
-      template && <CreateEventForm template={template} />
+      {template && <CreateEventForm template={template} />}
     </Dashboard>
   );
 }

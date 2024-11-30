@@ -68,7 +68,21 @@ class createEventService {
          }
                }
                
-      }  
+            }  
+       // Rule nr 2: If event is created using a template, which is allowed in certain days
+            if (template.date_locked) {
+               const eventAllowedDays = template.date_locked
+               const evenDay = new Date(data.date).toLocaleString("no-NO", { weekday: "long" })
+               if (!eventAllowedDays.includes(evenDay)) {
+                  return {
+                     success: false,
+                     error: {
+                        code: STATUS_CODES.BAD_REQUEST, // Conflict 
+                        message: `Chosen Template allow event creation only on ${eventAllowedDays.join(",")}!`,
+                     }
+                  }
+               }
+            }
          }  
          // Rule nr 1, scenario #2: If event is created from scratch
          const allExistingEvents = await EventRepository.listEvents({})
@@ -82,11 +96,14 @@ class createEventService {
                   success: false,
                   error: {
                      code: STATUS_CODES.CONFLICT, // Conflict 
-                     message: `An event already exist on chosen date!`,
+                     message: `Et arrangement eksisterer allerede på denne datoen, prøv en annen dato!`,
                   }
                }
             }
-               }
+         }
+      
+         
+
          
       const parsedEventData = eventSchema.parse(data)
       console.log("Parsed event data: ", parsedEventData)
