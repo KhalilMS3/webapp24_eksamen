@@ -24,6 +24,8 @@ export default function Templates() {
                                  price={template.price}
                                  capacity={template.capacity}
                                  isPrivate={template.is_private}
+                                 no_overlapping_event={template.no_overlapping_events}
+                                 date_locked={template.date_locked}
                               />
                            ))
                         }

@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CreateEventForm from "@/components/event/CreateEventForm";
 import { API_BASE } from "@/config/urls";
+import AdminNavBar from "@/components/admin/AdminNavBar";
+import Dashboard from "@/components/admin/Dashboard";
 
 export default function Page() {
   const { id } = useParams()
@@ -44,6 +46,9 @@ export default function Page() {
   }
 
   return (
+    
+    <Dashboard>
       template && <CreateEventForm template={template} />
+    </Dashboard>
   );
 }

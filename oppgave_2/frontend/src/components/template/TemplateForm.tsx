@@ -87,14 +87,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 }
    return (
      <>
-       <Header>
-         <ul className="flex gap-10">
-           <Link className="font-bold" href={"/admin/opprett-mal"}>
-             Opprett mal
-           </Link>
-           <li>(Admin Dashboard)</li>
-         </ul>
-       </Header>
        <h2 className="text-2xl font-bold mx-8 mt-10">Opprett et Mal</h2>
        <p className="text-xl font-semibold ml-8 mt-5  ">
          Opprett et Mal for dine arrangementer, og gjenbruk dem for raskere
