@@ -44,8 +44,11 @@ export default function Events() {
             <p>En feil oppsted ved opplasting av arrangenemter: {error}</p>
           ) : events.length > 0 ? (
             <section className="flex flex-wrap justify-items-stretch gap-3">
-              {events?.map((event) => {
+              {events
+              .filter((event) => !event.is_private)
+              .map((event) => {
                 const date = format(new Date(event.date), "dd/MM/yyyy");
+                
                 return (
                   <EventCard
                     key={event.id}
