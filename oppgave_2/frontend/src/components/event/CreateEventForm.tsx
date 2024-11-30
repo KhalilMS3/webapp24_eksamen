@@ -75,23 +75,24 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       return;
    }
    // Rule nr 2, creation of event in certain allowed days
-   if (template?.date_locked) {
-      const eventAllowedDays = template.date_locked.map((day) =>
-         day.toLowerCase()
-      ); // lower casing days to avoid mismatch
-
-      const eventDay = eventDate.toLocaleString("no-NO", {
-         weekday: "long",
-      });
-      console.log(eventAllowedDays);
-      console.log(eventDay);
-      if (!eventAllowedDays.includes(eventDay)) {
-         setError(
-         `Arrangementet blir opprettet via en mal som kun tillatter opprettelser på ${eventAllowedDays.join(
-            ", "
-         )}`
-         );
-         return;
+      if (template?.date_locked && template.date_locked.length > 0) {
+         const eventAllowedDays = template.date_locked.map((day) =>
+               day.toLowerCase()
+         ); // lower casing days to avoid mismatch
+         
+         const eventDay = eventDate.toLocaleString("no-NO", {
+            weekday: "long",
+         });
+         console.log(eventAllowedDays);
+         console.log(eventDay);
+         if (!eventAllowedDays.includes(eventDay)) {
+            setError(
+               `Arrangementet blir opprettet via en mal som kun tillatter opprettelser på ${eventAllowedDays.join(
+                  ", "
+               )}`
+            );
+            return;
+         
       }
    }
    } catch (error) {
@@ -143,21 +144,21 @@ const handleSubmit = async (e: React.FormEvent) => {
    }
 
    // Rule nr 2, creation of event in certain allowed days
-   if (template?.date_locked) {
-   const eventAllowedDays = template.date_locked.map((day) =>
-      day.toLowerCase()
-   );
-   const eventDay = new Date(date).toLocaleString("no-NO", {
-      weekday: "long",
-   });
-   if (!eventAllowedDays.includes(eventDay)) {
-      setError(
+   if (template?.date_locked && template.date_locked.length > 0) {
+     const eventAllowedDays = template.date_locked.map((day) =>
+       day.toLowerCase()
+     );
+     const eventDay = new Date(date).toLocaleString("no-NO", {
+       weekday: "long",
+     });
+     if (!eventAllowedDays.includes(eventDay)) {
+       setError(
          `Arrangementet blir opprettet via en mal som kun tillatter opprettelser på ${eventAllowedDays.join(
-         ", "
+           ", "
          )}`
-      );
-      return;
-   }
+       );
+       return;
+     }
    }
    const formData = {
    id: crypto.randomUUID(),
@@ -266,9 +267,9 @@ return (
          <input
          id="price"
          type="number"
-         value={price || 0}
+         value={price || ""}
          onChange={(e) =>
-            setPrice(e.target.value ? Number(e.target.value) : 0)
+            setPrice(e.target.value ? Number(e.target.value) : "")
          }
                className="w-full p-2 border rounded"
          disabled={template?.price !== undefined}
