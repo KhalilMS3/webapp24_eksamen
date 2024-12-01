@@ -14,7 +14,8 @@ export const eventSchema = z.object({
    waitlist_available: z.boolean(),
    available_spots: z.number(),
    status: z.string(),
-   created_at: z.string()
+   created_at: z.string(),
+   template_id: z.string().uuid()
 })
 
 export type Event = z.infer<typeof eventSchema>

@@ -4,7 +4,8 @@ import { API_BASE } from "@/config/urls";
 import { checkDateAvailability } from "@/lib/services/eventService";
 
 type CreateEventFormProps = {
-template?: {
+   template?: {
+   id: string,
    title: string;
    description?: string;
    capacity?: number;
@@ -173,7 +174,8 @@ const handleSubmit = async (e: React.FormEvent) => {
    waitlist_available: waitlistAvailable,
    available_spots: capacity ? Number(capacity) : 0,
    status,
-   created_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+   template_id: template?.id || null,
    };
 
    try {

@@ -34,6 +34,10 @@ class createEventService {
             data.slug = slugify(data.title)
          }
 
+         if (templateId) {
+            data.template_id = templateId
+         }
+
          // if event is created using template, we get the template to validate rules
          if (templateId) {
             const templateResult = await TemplateRepository.getTemplateById(templateId)
@@ -83,7 +87,14 @@ class createEventService {
                   }
                }
             }
+
+            // Rule nr 3: if template has "is private" as rule, ensure to it's true on creating en event
+            if (template.is_private) {
+               data.is_private = true;
+            }
          }  
+
+         
          // Rule nr 1, scenario #2: If event is created from scratch
          const allExistingEvents = await EventRepository.listEvents({})
          if (allExistingEvents.success) {
@@ -100,12 +111,11 @@ class createEventService {
                   }
                }
             }
+            
          }
-      
-         
 
-         
-      const parsedEventData = eventSchema.parse(data)
+        
+         const parsedEventData = eventSchema.parse(data)
       console.log("Parsed event data: ", parsedEventData)
       return await EventRepository.createEvent(parsedEventData)
       } catch (error) {
@@ -192,12 +202,18 @@ class createEventService {
                   }
                }
             }
+            // Ensure privat arrangement dont being changed during the update
+            if (template.is_private) {
+                  data.is_private = true
+               }
          }  
+         
 
          const parsedEvenData = eventUpdateSchema.parse(data)
          const updatedEventData = {
             ...parsedEvenData,
-            id: existingEvent.id
+            id: existingEvent.id,
+            template_id: existingEvent.template_id // Ensure template id remains the same on updating event
          }
          return await EventRepository.updateEvent(id, updatedEventData)
       } catch (error) {

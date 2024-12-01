@@ -102,9 +102,10 @@ export const createEventRepository = (db: any): EventRepository => {
             const stmt = db.prepare(`
                INSERT INTO events (
                id, title, slug, description, date, location, type, capacity, price,
-               is_private, waitlist_available, available_spots, status, created_at
+               is_private, waitlist_available, available_spots, status, created_at,
+               template_id
                )
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                `)
             
             stmt.run(
@@ -121,7 +122,8 @@ export const createEventRepository = (db: any): EventRepository => {
                eventData.waitlist_available,
                eventData.capacity,
                eventData.status,
-               eventData.created_at
+               eventData.created_at,
+               eventData.template_id
             )
             return {success: true, data}
          } catch (error: any) {

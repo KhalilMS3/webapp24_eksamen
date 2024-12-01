@@ -1,5 +1,6 @@
 export type EventType = {
    id: string,
+   template_id?: string,
    title: string,
    slug: string,
    description: string,
