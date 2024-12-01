@@ -14,7 +14,7 @@ export type EventType = {
    available_spots: number,
    status: string,
    created_at: string,
-   updated_at: string,
+   updated_at?: string | null,
 }
 
 export type ParticipantType = {

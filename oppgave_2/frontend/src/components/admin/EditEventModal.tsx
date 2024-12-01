@@ -4,6 +4,7 @@ import { API_BASE } from "@/config/urls";
 import { slugify } from "@/lib/services/eventService";
 
 interface EditEventModalProps {
+  events: EventType[]
   event: EventType | null;
   isOpen: boolean;
   onClose: () => void;
@@ -11,7 +12,7 @@ interface EditEventModalProps {
 }
 
 export default function EditEventModal(props: EditEventModalProps) {
-  const { event, isOpen, onClose, onUpdate } = props
+  const { events, event, isOpen, onClose, onUpdate } = props
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -22,8 +23,26 @@ export default function EditEventModal(props: EditEventModalProps) {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [waitlistAvailable, setWaitlistAvailable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [template, setTemplate] = useState<any | null>(null);
 
+  const fetchTemplateUsed = async (templateId: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/templates/${templateId}`)
+      const templateData = await response.json()
+      
+      if (!response.ok && !templateData.success) {
+        console.error("Faild to fetched used template")
+      } 
+      setTemplate(templateData.data);
+      console.log(template);
+      
+    } catch (error) {
+      console.error("Error fetching used template: ", error)
+    }
+
+  }
   useEffect(() => {
     if (event) {
       setTitle(event.title);
@@ -35,13 +54,70 @@ export default function EditEventModal(props: EditEventModalProps) {
       setPrice(event.price || "");
       setIsPrivate(event.is_private);
       setWaitlistAvailable(event.waitlist_available);
+
+      if (event.template_id) {
+        fetchTemplateUsed(event.template_id)
+      }
     }
   }, [event]);
+  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = e.target.value;
+    setDate(selectedDate);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const eventDate = new Date(selectedDate);
+      if (isNaN(eventDate.getTime())) {
+        setError("Ugyldig datoformat, Vennligst velg en gyldig dato");
+        return;
+      }
+      // Rule nr 1
+      if (template.no_overlapping_events) {
+        const existingEvents: EventType[] = events;
+        const hasOverlappingEvents = existingEvents.some(
+          (exisitngEvent) =>
+            exisitngEvent.id !== event?.id && // Exlude current event to be checked
+            new Date(exisitngEvent.date).toDateString() ===
+              new Date(date).toDateString()
+        );
+
+        if (hasOverlappingEvents) {
+          setError(
+            "Et arrangement eksisterer allere på denne datoen, prøv en annen dato!"
+          );
+          return;
+        }
+      }
+
+      // Rule nr 2: allowness on specific days
+      if (template.date_locked && template.date_locked.length > 0) {
+        const eventAllowedDays = template.date_locked.map((day: string) =>
+        day.toLowerCase()
+        )
+        const eventDay = eventDate.toLocaleString("no-NO", {
+          weekday: "long",
+        });
+        console.log(eventDay)
+        if (!eventAllowedDays.includes(eventDay)) {
+          setError(
+            `Arrangementet er opprettet via en mal som tillatter opprettelse på følgende dater: ${eventAllowedDays.join(
+              ", "
+            )}`
+          );
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("En feil oppstod ved parsing av dato: ", error)
+      setError("En feil oppstod ved parsing av dato, vennligst velg en gyldig dato.")
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+    setSuccess(null)
     if (!title) {
       setError("Tittel er påkrevd!");
       return;
@@ -59,6 +135,40 @@ export default function EditEventModal(props: EditEventModalProps) {
       return;
     }
 
+    if (template) {
+      // Rule nr 1:  No overlapping events if template has it as a rule
+      if (template.no_overlapping_events) {
+        const existingEvents: EventType[] = events
+        const hasOverlappingEvents = existingEvents.some(
+          (exisitngEvent) =>
+            exisitngEvent.id !== event?.id && // Exlude current event to be checked
+            new Date(exisitngEvent.date).toDateString() === new Date(date).toDateString()
+        )
+
+        if (hasOverlappingEvents) {
+          setError("Et arrangement eksisterer allere på denne datoen, prøv en annen dato!")
+          return
+        }
+      }
+      // Rule nr 2: allowness on specific days
+      if (template.date_locked && template.date_locked.length > 0) {
+        const eventAllowedDays = template.date_locked.map((day: string) =>
+          day.toLowerCase()
+        );
+        const eventDay = new Date(date).toLocaleString("no-NO", { weekday: "long" })
+        if (!eventAllowedDays.includes(eventDay)) {
+          setError(`Arrangementet kan kun opprettes på følgende dater: ${eventAllowedDays.join(", ")}`)
+          return
+        }
+      }
+
+      // Rule nr 3: event must remain private if specified in template
+      if (template.is_private) {
+        setIsPrivate(true)
+      }
+    }
+
+    
     const updatedEvent = {
       id: event?.id as string,
       title,
@@ -69,12 +179,13 @@ export default function EditEventModal(props: EditEventModalProps) {
       type: eventType,
       capacity: capacity ? Number(capacity) : 0,
       price: price ? Number(price) : 0,
-      is_private: event?.is_private || false,
+      is_private: isPrivate,
       waitlist_available: waitlistAvailable,
       available_spots: capacity ? Number(capacity) : Number(event?.available_spots),
       status: event?.status || "Ledig",
       created_at: event?.created_at || new Date().toISOString(),
-      updated_at: event?.updated_at || new Date().toISOString()
+      updated_at: event?.updated_at || new Date().toISOString(),
+      template_id: event?.template_id
     };
 
     try {
@@ -101,6 +212,8 @@ export default function EditEventModal(props: EditEventModalProps) {
       }
 
       onUpdate(updatedEvent);
+      setSuccess("Arrangement er oppdater 🎉")
+      setError(null)
       onClose();
     } catch (error: any) {
       setError(`En feil oppstod: ${error.message}`);
@@ -169,7 +282,7 @@ export default function EditEventModal(props: EditEventModalProps) {
                 id="date"
                 type="date"
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={handleDateChange}
                 className="w-full p-2 border rounded"
                 required
               />
@@ -208,6 +321,7 @@ export default function EditEventModal(props: EditEventModalProps) {
                 type="checkbox"
                 checked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
+                disabled={template?.is_private}
               />
               <label className="block font-semibold">Privat arrangement</label>
               <input
@@ -222,6 +336,7 @@ export default function EditEventModal(props: EditEventModalProps) {
           </section>
 
           {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && <p className="text-green-600 mb-4">{success}</p>}
 
           <section className="flex justify-end gap-4">
             <button

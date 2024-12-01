@@ -1,8 +1,6 @@
 import { Hono } from "hono";
 import { EventService } from "./event.service";
 import { z } from "zod";
-import { EventRepository } from "./event.repository";
-
 const EventController = new Hono()
 
 EventController.get('/', async (c) => {

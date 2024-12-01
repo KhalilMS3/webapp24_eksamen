@@ -35,7 +35,9 @@ const handleUpdate = (updatedEvent: EventType) => {
       event.id === updatedEvent.id ? updatedEvent : event
    )))
    setIsEditModalOpen(false);
-};
+   };
+   
+
 
    useEffect(() => {
    const fetchEventsFromServer = async () => {
@@ -85,8 +87,9 @@ return (
    )}
 
    {selectedEvent && (
-      <EditEventModal
-            event={selectedEvent}
+         <EditEventModal
+         events={events}
+         event={selectedEvent}
          isOpen={isEditModalOpen}
          onClose={() => setIsEditModalOpen(false)}
          onUpdate={handleUpdate}

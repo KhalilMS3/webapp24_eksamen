@@ -36,6 +36,8 @@ class createEventService {
 
          if (templateId) {
             data.template_id = templateId
+         } else {
+            data.template_id = null
          }
 
          // if event is created using template, we get the template to validate rules

@@ -123,7 +123,7 @@ export const createEventRepository = (db: any): EventRepository => {
                eventData.capacity,
                eventData.status,
                eventData.created_at,
-               eventData.template_id
+               eventData.template_id || null
             )
             return {success: true, data}
          } catch (error: any) {
@@ -139,7 +139,8 @@ export const createEventRepository = (db: any): EventRepository => {
                UPDATE events
                SET title = ?, slug = ?, description = ?, date = ?, location = ?, type = ?,
                capacity = ?, price = ?, is_private = ?, waitlist_available = ?, available_spots = ?,
-               status = ?, updated_at = CURRENT_TIMESTAMP
+               status = ?, updated_at = CURRENT_TIMESTAMP, template_id = ?
+
                WHERE id = ?
                `)
             
@@ -156,6 +157,7 @@ export const createEventRepository = (db: any): EventRepository => {
                eventData.waitlist_available,
                eventData.available_spots,
                eventData.status,
+               eventData.template_id,
                id
             )
             return{success: true, data}
