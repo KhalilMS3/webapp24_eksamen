@@ -15,8 +15,7 @@ test.describe("Oppgave 1 Create", () => {
     page = await context.newPage();
     await page.goto("/courseForm");
   });
-  
-/*
+  /*
   test.describe("When showing create page", () => {
     test("Should have test-id steps", async () => {
       // we should wait for the selector before checking if it is "available/visible"
@@ -24,9 +23,9 @@ test.describe("Oppgave 1 Create", () => {
       const stepsLocator = await page.locator('[data-testid="steps"]')
       await expect(stepsLocator).toBeVisible({ timeout: 10000 })
     });
-    test("Should have test-id step", async () => {
-      await page.waitForSelector('[data-testid="step"]')
-      const submitLocator = await page.locator('[data-testid="step"]')
+    test("Should have test-id form_submit", async () => {
+      await page.waitForSelector('[data-testid="form_submit"]')
+      const submitLocator = await page.locator('[data-testid="form_submit"]')
       await expect(submitLocator).toBeVisible({ timeout: 10000 })
     });
     test("Should have test-id title", async () => {
@@ -63,9 +62,9 @@ test.describe("Oppgave 1 Create", () => {
       await page.waitForSelector('[data-testid="form_category"]')
       const formCategoryLocator = await page.locator('[data-testid="form_category"]');
       await expect(formCategoryLocator).toBeVisible({ timeout: 10000 });
-    });
   });
-  */
+});
+
  test.describe("When stepping from first to second step", () => {
 test("Should show error if any required field is missing", async () => {
     // Vent på at alle form-elementene er tilgjengelige
@@ -99,7 +98,6 @@ test("Should show error if any required field is missing", async () => {
     // Sjekk om feilmeldingen vises
     await expect(formError).toBeVisible({ timeout: 10000 });
   });
-
   test("Should show error if title field is missing", async () => {
     // Vent på at alle form-elementene er tilgjengelige
     const formTitle = page.locator('[data-testid="form_title"]');
@@ -115,7 +113,7 @@ test("Should show error if any required field is missing", async () => {
     await expect(formCategory).toBeVisible();
     await expect(formSubmit).toBeVisible();
 
-    // Fyll ut alle feltene med tomme verdier
+    // Fyll ut alle feltene med verdier untatt tittel
     await formTitle.fill("");
     await formSlug.fill("slug");
     await formDescription.fill("description");
@@ -148,7 +146,7 @@ test("Should show error if any required field is missing", async () => {
     await expect(formCategory).toBeVisible();
     await expect(formSubmit).toBeVisible();
 
-    // Fyll ut alle feltene med tomme verdier
+    // Fyll ut alle feltene med verdier untatt slug
     await formTitle.fill("title");
     await formSlug.fill("");
     await formDescription.fill("description");
@@ -181,7 +179,7 @@ test("Should show error if any required field is missing", async () => {
     await expect(formCategory).toBeVisible();
     await expect(formSubmit).toBeVisible();
 
-    // Fyll ut alle feltene med tomme verdier
+    // Fyll ut alle feltene med verdier untatt description
     await formTitle.fill("title");
     await formSlug.fill("slug");
     await formDescription.fill("");
@@ -215,7 +213,7 @@ test("Should show error if any required field is missing", async () => {
     await expect(formCategory).toBeVisible();
     await expect(formSubmit).toBeVisible();
 
-    // Fyll ut alle feltene med tomme verdier
+    // Fyll ut alle feltene med verdier
     await formTitle.fill("title");
     await formSlug.fill("slug");
     await formDescription.fill("description");
@@ -234,20 +232,97 @@ test("Should show error if any required field is missing", async () => {
   });
 
   test("Should not show error if all fields are provided", async () => {
+        // Vent på at alle form-elementene er tilgjengelige
+    const formTitle = page.locator('[data-testid="form_title"]');
+    const formSlug = page.locator('[data-testid="form_slug"]');
+    const formDescription = page.locator('[data-testid="form_description"]');
+    const formCategory = page.locator('[data-testid="form_category"]');
+    const formSubmit = page.locator('[data-testid="form_submit"]');
+    const formError = page.locator('[data-testid="form_error"]');
 
+    await expect(formTitle).toBeVisible();
+    await expect(formSlug).toBeVisible();
+    await expect(formDescription).toBeVisible();
+    await expect(formCategory).toBeVisible();
+    await expect(formSubmit).toBeVisible();
+
+    // Fyll ut alle feltene med verdier
+    await formTitle.fill("title");
+    await formSlug.fill("slug");
+    await formDescription.fill("description");
+     // Vent på at `form_category` inneholder `option`-elementer
+    await formCategory.waitFor();
+    await formCategory.selectOption({ index: 1 });
+
+  // Klikk på knappen som går til steget "Leksjoner"
+    const lessonsButton = page.locator('button', { hasText: 'Leksjoner' });
+    await expect(lessonsButton).toBeVisible();
+    await lessonsButton.click();
+  
+    await page.waitForTimeout(500)
+    // Sjekk om feilmeldingen vises
+    await expect(formError).not.toBeVisible({ timeout: 10000 });
   });
+  
+  */
+  
+  
+  test.describe("When at step two", () => {
+    test("Should have disabled submit btn", async () => {
+    const formSubmit = page.locator('[data-testid="form_submit"]')
+    
+    await expect(formSubmit).toBeVisible({timeout: 10000})
+    await expect(formSubmit).toBeDisabled
+    });
+  test("Should have no errors", async () => {
+    const formError = page.locator('[data-testid="form_error"]')
+    await expect(formError).not.toBeVisible({timeout: 10000})
+    });
+  test("Should have no success", async () => {
+      const formSuccess = page.locator('[data-testid="form_success"]')
+    await expect(formSuccess).not.toBeVisible({timeout: 10000})
+    });
+  test("Should have test-id lessons", async () => {
+    const lessons = page.locator('[data-testid="lessons"]')
+    await expect(lessons).toHaveCount(0, { timeout: 10000 });
+
+    });
+  test("Should have test-id form_lesson_add", async () => {
+    const formTitle = page.locator('[data-testid="form_title"]');
+    const formSlug = page.locator('[data-testid="form_slug"]');
+    const formDescription = page.locator('[data-testid="form_description"]');
+    const formCategory = page.locator('[data-testid="form_category"]');
+    const formSubmit = page.locator('[data-testid="form_submit"]');
+    const formLessonAdd = page.locator('[data-testid="form_lesson_add"]')
+
+    await expect(formTitle).toBeVisible();
+    await expect(formSlug).toBeVisible();
+    await expect(formDescription).toBeVisible();
+    await expect(formCategory).toBeVisible();
+    await expect(formSubmit).toBeVisible();
+
+    // Fyll ut alle feltene med verdier
+    await formTitle.fill("title");
+    await formSlug.fill("slug");
+    await formDescription.fill("description");
+    
+    // Vent på at `form_category` inneholder `option`-elementer
+    await formCategory.waitFor();
+    await formCategory.selectOption({ index: 1 });
+
+    // Klikk på knappen som går til steget "Leksjoner"
+    const lessonsButton = page.locator('button', { hasText: 'Leksjoner' });
+    await expect(lessonsButton).toBeVisible();
+    await lessonsButton.click();
+  
+    await page.waitForTimeout(500)
+      await expect(formLessonAdd).toBeVisible({ timeout: 10000 })
+    });
   });
-})
+}); // END FOR main describe
+
   
   /*
-  test.describe("When at step two", () => {
-    test("Should have disabled submit btn", async () => {});
-    test("Should have no errors", async () => {});
-    test("Should have no success", async () => {});
-    test("Should have test-id lessons", async () => {});
-    test("Should have test-id form_lesson_add", async () => {});
-    test("Should have test-id form_lesson_add", async () => {});
-  });
   test.describe("When added new lesson", () => {
     test("Should have disabled submit btn", async () => {});
     test("Should have no errors", async () => {});
