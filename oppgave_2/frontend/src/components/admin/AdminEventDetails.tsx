@@ -29,6 +29,9 @@ const handleEditParticipant = (participant: Participant) => {
    setSelectedParticipant(participant);
    setIsEditModalOpen(true);
 };
+const handleDeleteParticipant = (participantId: string) => {
+    setLocalParticipants((prev) => prev.filter((participant) => participant.id !== participantId));
+  };
 
 const handleModalClose = () => {
    setIsEditModalOpen(false);
@@ -91,6 +94,7 @@ return (
             )
          );
          }}
+         onDelete={handleDeleteParticipant}
       />
    )}
    </section>
