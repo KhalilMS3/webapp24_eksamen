@@ -3,14 +3,20 @@ import { Participant } from "@/types/types";
 type ParticipantCardProps = {
   participant: Participant;
   onEdit: () => void;
+  onSelect: (participantId: string, selected: boolean) => void;
 };
 
 export default function ParticipantCard({
   participant,
   onEdit,
+  onSelect
 }: ParticipantCardProps) {
   return (
     <div className="bg-white p-4 rounded-md shadow-md relative">
+      <input type="checkbox"
+        className="rounded"
+        onChange={(e) => onSelect(participant.id, e.target.checked)}
+      />
       <h4 className="text-lg font-semibold mb-2">
         Deltaker: {participant.name}
       </h4>
