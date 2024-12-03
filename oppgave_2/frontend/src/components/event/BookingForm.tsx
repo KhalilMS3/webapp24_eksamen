@@ -67,13 +67,13 @@ export default function BookingForm(props: BookingFormProps) {
     e.preventDefault();
     setError(null);
 
-    if (!isAdmin) {
+    
       if (available_spots === 0 && !waitlist_available) {
         setError(
           "Dette arrangementet er fullbooket, og det er ikke mulig å bli satt på venteliste 🙁"
         );
         return;
-      } else if (is_private) {
+      } else if (is_private && !isAdmin) {
         setError(
           "Dette arrangementet er privat, for å kunne delta kontakt admin!"
         );
@@ -83,11 +83,10 @@ export default function BookingForm(props: BookingFormProps) {
         setError("Vennligst fyll inn navn og e-post for bestilleren");
         return;
       }
-    }
+
     
 
     try {
-      // Genererer booking ID på forhånd slik at vi kan bruke den senere
       // Generating a booking ID in advance to use it later  
       const bookingId = uuidv4();
 
@@ -168,9 +167,22 @@ export default function BookingForm(props: BookingFormProps) {
       }
       
       const updatedEventData = {
-        ...event,
+        id: event?.id,
+        title: event?.title,
+        slug: event?.slug,
+        description: event?.description,
+        date: event?.date,
+        location: event?.location,
+        type: event?.type,
+        capacity: event?.capacity,
+        price: event?.price,
+        is_private: event?.is_private,
+        waitlist_available: event?.waitlist_available,
         available_spots: updatedAvailableSpots,
-        status: updatedAvailableSpots === 0 ? "Fullbooket" : "Ledig"
+        status: updatedAvailableSpots === 0 ? "Fullbooket" : "Ledig",
+        created_at: event?.created_at,
+        updated_at: new Date().toISOString(),
+        template_id: event?.template_id,
       };
       const updateSpotsResponse = await fetch(`${API_BASE}/events/${eventId}`, {
         method: "PATCH",
