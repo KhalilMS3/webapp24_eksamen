@@ -7,7 +7,7 @@ export const participantSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   waitlist_status: z.boolean(),
-  status: z.enum(["Pending", "Approved", "Rejected"]),
+  status: z.enum(["Pending", "Approved", "Rejected"]).default("Pending"),
   created_at: z.string().optional(), 
 });
 export const updateParticipantSchema = z.object({

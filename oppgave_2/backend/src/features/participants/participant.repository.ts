@@ -75,8 +75,8 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
         console.log("Data to be saved i database:", participantData)
         const stmt = db.prepare(`
           INSERT INTO participants (
-            id, booking_id, name, email, waitlist_status, created_at
-          ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            id, booking_id, name, email, waitlist_status, status, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
         `);
 
         stmt.run(
@@ -84,7 +84,8 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
           participantData.booking_id,
           participantData.name,
           participantData.email,
-          participantData.waitlist_status
+          participantData.waitlist_status,
+          participantData.status
         );
 
         return { success: true, data };
