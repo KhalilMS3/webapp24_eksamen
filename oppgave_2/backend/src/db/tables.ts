@@ -3,7 +3,17 @@ import { type DB } from "./db"
 export const createTables = (db: DB) => {
    try {
       db.exec(`
-         ALTER TABLE events ADD COLUMN template_id VARCHAR(255) NULL
+         DROP TABLE participants;
+         CREATE TABLE IF NOT EXISTS participants (
+            id TEXT PRIMARY KEY,
+            booking_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            waitlist_status INTEGER DEFAULT 0,
+            status TEXT DEFAULT "Pending",
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+         );
          `)
       console.log("Tables created successfully!")
    } catch (error) {

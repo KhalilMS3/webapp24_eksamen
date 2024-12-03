@@ -3,7 +3,7 @@ import { EventType } from "@/types/types";
 import { API_BASE } from "@/config/urls";
 import { slugify } from "@/lib/services/eventService";
 
-interface EditEventModalProps {
+type EditEventModalProps = {
   events: EventType[]
   event: EventType | null;
   isOpen: boolean;

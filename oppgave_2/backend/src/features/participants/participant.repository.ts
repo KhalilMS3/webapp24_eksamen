@@ -4,6 +4,7 @@ import db from "@/db/db";
 
 type ParticipantRepository = {
   listParticipants: () => Promise<Result<Participant[]>>;
+  getEventParticipants: (eventId: string) => Promise<Result<Participant[]>>;
   getParticipantById: (id: string) => Promise<Result<Participant>>;
   createParticipant: (data: Participant) => Promise<Result<Participant>>;
   updateParticipant: (id: string, data: Participant) => Promise<Result<Participant>>;
@@ -24,6 +25,23 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
       } catch (error: any) {
         console.error("Error listing participants:", error);
         return { success: false, error: error.message };
+      }
+    },
+
+    getEventParticipants: async (eventId: string): Promise<Result<Participant[]>> => { 
+      try {
+        const stmt = db.prepare(`
+            SELECT participants.*
+      FROM bookings
+      JOIN participants ON participants.booking_id = bookings.id
+      WHERE bookings.event_id = ?
+          `)
+        
+        const participants = stmt.all(eventId)
+        return {success: true, data: participants}
+      } catch (error: any) {
+        console.error("Error fetching event participants: ", error)
+        return { success: false, error: error.message }
       }
     },
 
@@ -81,15 +99,13 @@ export const createParticipantRepository = (db: any): ParticipantRepository => {
         const participantData = participantToDB(data);
         const stmt = db.prepare(`
           UPDATE participants
-          SET booking_id = ?, name = ?, email = ?, waitlist_status = ?, created_at = CURRENT_TIMESTAMP
+          SET status = ?
           WHERE id = ?
         `);
 
         stmt.run(
-          participantData.booking_id,
-          participantData.name,
-          participantData.email,
-          participantData.waitlist_status,
+          
+          participantData.status,
           id
         );
 

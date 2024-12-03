@@ -17,12 +17,6 @@ export type EventType = {
    updated_at?: string | null,
 }
 
-export type ParticipantType = {
-   id: string,
-   name: string,
-   email: string;
-}
-
 export type Template = {
    id: string;
    title: string;
@@ -36,3 +30,13 @@ export type Template = {
    created_at: string;
    updated_at?: string;
 };
+
+export type Participant = {
+  id: string;
+  event_id: string;
+  name: string;
+  email: string;
+  status:string;
+  created_at: string;
+  updated_at?: string;
+}

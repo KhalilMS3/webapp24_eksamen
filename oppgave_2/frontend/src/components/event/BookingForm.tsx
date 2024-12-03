@@ -1,5 +1,5 @@
 import { API_BASE } from "@/config/urls";
-import { ParticipantType } from "@/types/types";
+import { Participant } from "@/types/types";
 import { v4 as uuidv4 } from "uuid";
 import React, { useState, useEffect } from "react";
 import { useEventDetails } from "@/hooks/useEventDetails";
@@ -25,7 +25,7 @@ export default function BookingForm(props: BookingFormProps) {
 
   const [customerName, setCustomerName] = useState<string>("");
   const [customerEmail, setCustomerEmail] = useState<string>("");
-  const [participants, setParticipants] = useState<ParticipantType[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(eventPrice ?? 0);
@@ -35,7 +35,7 @@ export default function BookingForm(props: BookingFormProps) {
   }, [eventPrice]);
 
   const handleAddParticipant = () => {
-    setParticipants((prev) => [...prev, { id: uuidv4(), name: "", email: "" }]);
+    setParticipants((prev) => [...prev, { id: uuidv4(), event_id: "", name: "", email: "", status: "Pending", created_at: "", updated_at: "" }]);
     setTotalPrice((prev) => prev + (eventPrice ?? 0));
   };
 

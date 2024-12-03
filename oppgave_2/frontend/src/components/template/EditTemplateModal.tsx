@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Template } from "@/types/types";
 import { API_BASE } from "@/config/urls";
 
-interface EditTemplateModalProps {
+type EditTemplateModalProps = {
   template: Template | null;
   isOpen: boolean;
   onClose: () => void;

@@ -15,6 +15,17 @@ ParticipantController.get('/', async (c) => {
       return c.json({ success: true, data: result.data }, 200)
 })
 
+ParticipantController.get('/event/:eventId', async (c) => {
+   const eventId = c.req.param('eventId')
+   const result = await ParticipantService.getEventParticipants(eventId)
+
+   if (!result.success) {
+      return c.json({success: false, error: result.error.message},500)
+   }
+
+      return c.json({ success: true, data: result.data }, 200)
+})
+
 ParticipantController.get('/:id', async (c) => {
    const id = c.req.param('id')
    const result = await ParticipantService.getParticipantById(id)
