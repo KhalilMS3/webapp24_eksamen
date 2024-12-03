@@ -11,6 +11,7 @@ type BookingFormProps = {
   available_spots?: number;
   waitlist_available?: boolean;
   is_private: boolean | undefined;
+  isAdmin: boolean;
 };
 
 export default function BookingForm(props: BookingFormProps) {
@@ -21,6 +22,7 @@ export default function BookingForm(props: BookingFormProps) {
     available_spots,
     waitlist_available,
     is_private,
+    isAdmin,
   } = props;
 
   const [customerName, setCustomerName] = useState<string>("");
@@ -65,21 +67,23 @@ export default function BookingForm(props: BookingFormProps) {
     e.preventDefault();
     setError(null);
 
-    if (available_spots === 0 && !waitlist_available) {
-      setError(
-        "Dette arrangementet er fullbooket, og det er ikke mulig å bli satt på venteliste 🙁"
-      );
-      return;
-    } else if (is_private) {
-      setError(
-        "Dette arrangementet er privat, for å kunne delta kontakt admin!"
-      );
-      return;
-    }
+    if (!isAdmin) {
+      if (available_spots === 0 && !waitlist_available) {
+        setError(
+          "Dette arrangementet er fullbooket, og det er ikke mulig å bli satt på venteliste 🙁"
+        );
+        return;
+      } else if (is_private) {
+        setError(
+          "Dette arrangementet er privat, for å kunne delta kontakt admin!"
+        );
+        return;
+      }
       if (!customerName || !customerEmail) {
         setError("Vennligst fyll inn navn og e-post for bestilleren");
         return;
       }
+    }
     
 
     try {
