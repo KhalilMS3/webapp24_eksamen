@@ -15,7 +15,7 @@ test.describe("Oppgave 1 Create", () => {
     page = await context.newPage();
     await page.goto("/courseForm");
   });
-  /*
+  
   test.describe("When showing create page", () => {
     test("Should have test-id steps", async () => {
       // we should wait for the selector before checking if it is "available/visible"
@@ -319,7 +319,6 @@ test("Should show error if any required field is missing", async () => {
       await expect(formLessonAdd).toBeVisible({ timeout: 10000 })
     });
   });
-  */
  
 test.describe("When added new lesson", () => {
     test("Should have disabled submit btn", async () => {
