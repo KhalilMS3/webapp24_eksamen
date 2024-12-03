@@ -12,7 +12,6 @@
 - `/events`: Håndterer opprettelse, visning, oppdatering og sletting av arrangementer.
 - `/templates`: Håndterer opprettelse, visning, oppdatering og sletting av maler.
 - `/participants`: Håndterer opprettelse, visning, oppdatering, sletting av påmeldinger, og inkluderer en funksjon for masseoppdatering.
-- `/participants/bulk-update`: Endepunkt for å oppdatere statusen til flere deltakere samtidig.
 - `/bookings`: Håndterer opprettelse, visning, oppdatering og sletting av bookings.  (ikke brukt mye i applikasjonen)
 
 ## 3. API-Verber per Endepunkt
@@ -33,11 +32,8 @@
 - **GET `/participants/`**: Henter informasjon om deltakere/påmeldinger.
 - **GET `/participants/:id`**: Henter informasjon om en spesifikk deltakere/påmeldinger.
 - **POST `/participants`**: Legger til en ny deltaker/påmelding.
-- **PATCH `/participants/:id`**: Oppdaterer statusen til en deltaker/påmelding.
+- **PATCH `/participants/:id`**: Oppdaterer statusen til en deltaker/påmelding & brukes også for bulk oppdatering av statusen til flere deltakere/påmeldinger samtidig.
 - **DELETE `/participants/:id`**: Sletter en deltaker/påmelding.
-
-### `/participants/bulk-update`
-- **PATCH `/participants/bulk-update`**: Oppdaterer statusen for flere deltakere basert på en liste av deltakere. (logikken er ikke ferdig implementert grunnet dårlig tid, en del bugs må fikses med tanke på inputdata som sendes til serveren er ugyldige)
 
 ## 4. Respons og Statuskoder
 ### `/events`
@@ -57,9 +53,6 @@
 - **POST**: `201 Created` - deltakeren/påmeldingen. ble lagt til.
 - **PATCH**: `200 OK` - Statusen ble oppdatert. `400 Bad Request` ved ugyldig input.
 - **DELETE**: `200 OK` - Deltakeren/påmeldingen ble slettet.
-
-### `/participants/bulk-update`
-- **PATCH**: `200 OK` - Statusen ble oppdatert for alle angitte deltakere. `400 Bad Request` hvis noen av deltakere ikke finnes.
 
 ## 5. Bruk av API-Endepunkter på Sider
 ### **Kunde side (Events Overview `/kunde/arrangementer`)**
