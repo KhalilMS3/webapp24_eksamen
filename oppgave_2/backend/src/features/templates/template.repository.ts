@@ -5,6 +5,7 @@ import db from "@/db/db"
 type TemplateRepository = {
    listTemplates: () => Promise<Result<Template[]>>
    getTemplateById: (id: string) => Promise<Result<Template>>
+   isTemplateInUse: (id: string) => Promise<boolean>
    createTemplate: (data: Template) => Promise<Result<Template>>
    updateTemplate: (id: string, data: Template) => Promise<Result<Template>>
    deleteTemplate: (id: string) => Promise<Result<null>>
@@ -24,6 +25,12 @@ export const createTemplateRepository = (db: any): TemplateRepository => {
             console.error("Error listing templates from database:", error)
             return{success: false, error: error.message}
          }
+      },
+      isTemplateInUse: async (id: string): Promise<boolean> => {
+         // ChatGPT - simplified query logic to check if template is in use
+         const stmt = db.prepare(`SELECT COUNT(*) AS count FROM events WHERE template_id = ?`);
+         const result = stmt.get(id);
+         return result.count > 0;
       },
       getTemplateById: async (id: string): Promise<Result<Template>> => {
          try {

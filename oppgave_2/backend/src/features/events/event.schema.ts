@@ -15,7 +15,7 @@ export const eventSchema = z.object({
    available_spots: z.number(),
    status: z.string(),
    created_at: z.string(),
-   template_id: z.string().nullable()
+   template_id: z.string().optional().nullable()
 })
 
 export type Event = z.infer<typeof eventSchema>
@@ -32,7 +32,7 @@ export const eventFromDB = (event: z.infer<typeof eventSchemaDB>): z.infer<typeo
    return {
       ...event,
       is_private: event.is_private === 1 ? true : false,
-      waitlist_available:  event.waitlist_available === 1 ? true : false,
+      waitlist_available: event.waitlist_available === 1 ? true : false,
    }
 }
 

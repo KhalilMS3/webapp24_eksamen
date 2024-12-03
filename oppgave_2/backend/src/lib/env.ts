@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { createEnv } from "@t3-oss/env-core";
+import { createEnv } from '@t3-oss/env-core';
 import { z } from "zod";
 
 export type ServerEnv = typeof env;

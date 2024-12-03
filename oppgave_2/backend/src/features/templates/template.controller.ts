@@ -4,7 +4,7 @@ import { TemplateService } from "./template.service";
 
 const TemplateController = new Hono();
 
-TemplateController.get("/", async (c) => {
+TemplateController.get("/", async (c: any) => {
     const result = await TemplateService.listTemplates();
 
     if (!result.success) {
@@ -13,7 +13,7 @@ TemplateController.get("/", async (c) => {
     return c.json(result.data, 200);
 });
 
-TemplateController.get("/:id", async (c) => {
+TemplateController.get("/:id", async (c: any) => {
     const id = c.req.param("id");
 
     const result = await TemplateService.getTemplateById(id);
@@ -22,8 +22,18 @@ TemplateController.get("/:id", async (c) => {
     }
     return c.json({ success: true, data: result.data }, 200);
 });
+TemplateController.get("/:id/in-use", async (c: any) => {
+    const id = c.req.param("id");
+    try {
+        const result = await TemplateService.isTemplateInUse(id);
+        return c.json({ success: true, inUse: result }, 200);
+    } catch (error) {
+        console.error("Error checking if template is in use: ", error)
+        return c.json({ success: false, error: "Failed to check if template is in use" }, 500)
+    }
+});
 
-TemplateController.post("/", async (c) => {
+TemplateController.post("/", async (c: any) => {
     try {
         const body = await c.req.json();
         console.log("Received template data:", body);
@@ -40,7 +50,7 @@ TemplateController.post("/", async (c) => {
     }
 });
 
-TemplateController.patch("/:id", async (c) => {
+TemplateController.patch("/:id", async (c: any) => {
     try {
         const id = c.req.param("id");
         const body = await c.req.json();
@@ -58,7 +68,7 @@ TemplateController.patch("/:id", async (c) => {
     }
 });
 
-TemplateController.delete("/:id", async (c) => {
+TemplateController.delete("/:id", async (c: any) => {
     try {
         const id = c.req.param("id");
         const response = await TemplateService.deleteTemplate(id);

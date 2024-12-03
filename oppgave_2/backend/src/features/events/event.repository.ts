@@ -123,7 +123,7 @@ export const createEventRepository = (db: any): EventRepository => {
                eventData.capacity,
                eventData.status,
                eventData.created_at,
-               eventData.template_id || null
+               eventData.template_id
             )
             return {success: true, data}
          } catch (error: any) {
